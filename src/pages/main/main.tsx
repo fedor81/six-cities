@@ -2,7 +2,7 @@ import Header from '../../components/header/header';
 import PlaceCard, { PlaceCardType } from '../../components/place-card/place-card';
 
 type Props = {
-  placesCount: number,
+  placesCount: number;
 }
 
 function Main({ placesCount }: Props): JSX.Element {
@@ -69,15 +69,15 @@ function Main({ placesCount }: Props): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {Array.from({ length: placesCount }).map((_, index) => (
+                {Array.from({ length: placesCount }, (_, i) => (
                   <PlaceCard
-                    key={index}
+                    key={`place-${i}`}
                     title="Beautiful &amp; luxurious apartment at great location"
                     type={PlaceCardType.Apartment}
                     img="img/apartment-01.jpg"
                     cost={120}
                     rating={80}
-                    isPremium={true}
+                    isPremium
                   />
                 ))}
               </div>
@@ -89,7 +89,7 @@ function Main({ placesCount }: Props): JSX.Element {
         </div>
       </main >
     </div >
-  )
+  );
 }
 
 export default Main;

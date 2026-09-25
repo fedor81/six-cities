@@ -1,5 +1,5 @@
 type FooterProps = {
-  withContainer?: boolean,
+  withContainer?: boolean;
 }
 
 function Footer({ withContainer = false }: FooterProps): JSX.Element {

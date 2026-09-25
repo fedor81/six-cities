@@ -6,13 +6,13 @@ export enum PlaceCardType {
 type Rating = 0 | 20 | 40 | 60 | 80 | 100
 
 type PlaceCardProps = {
-  img: string,
-  cost: number,
-  title: string,
-  type: PlaceCardType,
-  rating: Rating,
-  isPremium?: boolean,
-  isBookmarked?: boolean
+  img: string;
+  cost: number;
+  title: string;
+  type: PlaceCardType;
+  rating: Rating;
+  isPremium?: boolean;
+  isBookmarked?: boolean;
 }
 
 
@@ -44,7 +44,7 @@ function PlaceCard(p: PlaceCardProps): JSX.Element {
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{ width: p.rating + '%' }}></span>
+            <span style={{ width: `${p.rating }%` }}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ function PlaceCard(p: PlaceCardProps): JSX.Element {
         <p className="place-card__type">{p.type}</p>
       </div>
     </article >
-  )
+  );
 }
 
 export default PlaceCard;

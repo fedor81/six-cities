@@ -1,8 +1,8 @@
 type HeaderProps = {
-  isLoggedIn?: boolean,
-  favoriteCount?: number,
-  isLogoActive?: boolean,
-  showNavigation?: boolean,
+  isLoggedIn?: boolean;
+  favoriteCount?: number;
+  isLogoActive?: boolean;
+  showNavigation?: boolean;
 }
 
 function Header({

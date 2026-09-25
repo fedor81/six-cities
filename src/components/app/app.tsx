@@ -1,7 +1,7 @@
-import Main from "../../pages/main/main";
+import Main from '../../pages/main/main';
 
 type AppProps = {
-  placesCount: number
+  placesCount: number;
 }
 
 function App({ placesCount }: AppProps): JSX.Element {
