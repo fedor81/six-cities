@@ -4,7 +4,7 @@ type Props = {
   placesCount: number,
 }
 
-function SixCities({ placesCount }: Props): JSX.Element {
+function Main({ placesCount }: Props): JSX.Element {
   return (
     <section>
       <h1 className="visually-hidden">Cities</h1>
@@ -87,4 +87,4 @@ function SixCities({ placesCount }: Props): JSX.Element {
   )
 }
 
-export default SixCities;
+export default Main;
