@@ -1,7 +1,11 @@
 import SixCities from "../../pages/six-cities/six-cities";
 
-function App(): JSX.Element {
-  return <SixCities />;
+type AppProps = {
+  placesCount: number
+}
+
+function App({ placesCount }: AppProps): JSX.Element {
+  return <SixCities placesCount={placesCount} />;
 }
 
 export default App;
