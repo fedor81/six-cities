@@ -24,3 +24,7 @@ yarn-error.log*
 .idea
 *.sublime*
 .vscode
+
+.opencode/
+.github/prompts/
+.github/workflows/copilot-setup-steps.yml
