@@ -1,10 +1,11 @@
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import NotFound from '../../pages/not-found/not-found';
 import Offer from '../../pages/offer/offer';
+import ProtectedRoute from '../private-route/private-route';
 
 type AppProps = {
   placesCount: number;
@@ -15,7 +16,7 @@ function App({ placesCount }: AppProps): JSX.Element {
     <Routes>
       <Route
         path={AppRoute.Main}
-        element={<Main placesCount={placesCount}></Main>}>
+        element={<Main placesCount={placesCount} />}>
       </Route>
       <Route
         path={AppRoute.Login}
@@ -23,7 +24,7 @@ function App({ placesCount }: AppProps): JSX.Element {
       </Route>
       <Route
         path={AppRoute.Favorites}
-        element={<Favorites />}>
+        element={<ProtectedRoute children={<Favorites />} authorizationStatus={AuthorizationStatus.NoAuth} />}>
       </Route>
       <Route
         path={AppRoute.Offer + "/:id"}
