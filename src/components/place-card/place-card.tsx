@@ -1,3 +1,5 @@
+import PlaceCardTypeBadge from '../place-card-type-badge/place-card-type-badge';
+
 export enum PlaceCardType {
   Apartment = 'Apartment',
   Room = 'Room',
@@ -58,7 +60,7 @@ function PlaceCard({
         <h2 className="place-card__name">
           <a href="#">{title}</a>
         </h2>
-        <p className="place-card__type">{type}</p>
+        <PlaceCardTypeBadge type={type} />
       </div>
     </article >
   );
