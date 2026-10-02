@@ -1,10 +1,10 @@
-import { Navigate } from "react-router-dom"
-import { AppRoute, AuthorizationStatus } from "../../const"
+import { Navigate } from 'react-router-dom';
+import { AppRoute, AuthorizationStatus } from '../../const';
 
 type ProtectedRouteProps = {
-  authorizationStatus: AuthorizationStatus,
-  redirectTo?: AppRoute,
-  children: JSX.Element,
+  authorizationStatus: AuthorizationStatus;
+  redirectTo?: AppRoute;
+  children: JSX.Element;
 }
 
 function ProtectedRoute({ authorizationStatus, redirectTo, children }: ProtectedRouteProps): JSX.Element {
@@ -14,7 +14,7 @@ function ProtectedRoute({ authorizationStatus, redirectTo, children }: Protected
     ) : (
       <Navigate to={redirectTo || AppRoute.Login} />
     )
-  )
+  );
 }
 
 export default ProtectedRoute;

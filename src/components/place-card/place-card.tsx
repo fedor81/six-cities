@@ -1,9 +1,5 @@
 import PlaceCardTypeBadge from '../place-card-type-badge/place-card-type-badge';
-
-export enum PlaceCardType {
-  Apartment = 'Apartment',
-  Room = 'Room',
-}
+import { PlaceCardType } from './place-card-type';
 
 type Rating = 0 | 20 | 40 | 60 | 80 | 100
 

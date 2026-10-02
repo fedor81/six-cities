@@ -1,5 +1,5 @@
 type PlaceCardTypeBadgeProps = {
-  type: string;
+  type: 'Apartment' | 'Room';
 };
 
 function PlaceCardTypeBadge({ type }: PlaceCardTypeBadgeProps) {

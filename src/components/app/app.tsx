@@ -12,30 +12,41 @@ type AppProps = {
 }
 
 function App({ placesCount }: AppProps): JSX.Element {
-  return <BrowserRouter>
-    <Routes>
-      <Route
-        path={AppRoute.Main}
-        element={<Main placesCount={placesCount} />}>
-      </Route>
-      <Route
-        path={AppRoute.Login}
-        element={<Login />}>
-      </Route>
-      <Route
-        path={AppRoute.Favorites}
-        element={<ProtectedRoute children={<Favorites />} authorizationStatus={AuthorizationStatus.NoAuth} />}>
-      </Route>
-      <Route
-        path={AppRoute.Offer + "/:id"}
-        element={<Offer />}>
-      </Route>
-      <Route
-        path="*"
-        element={<NotFound />}>
-      </Route>
-    </Routes>
-  </BrowserRouter >
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path={AppRoute.Main}
+          element={<Main placesCount={placesCount} />}
+        >
+        </Route>
+        <Route
+          path={AppRoute.Login}
+          element={<Login />}
+        >
+        </Route>
+        <Route
+          path={AppRoute.Favorites}
+          element={
+            <ProtectedRoute authorizationStatus={AuthorizationStatus.NoAuth}>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        >
+        </Route>
+        <Route
+          path={`${AppRoute.Offer }/:id`}
+          element={<Offer />}
+        >
+        </Route>
+        <Route
+          path="*"
+          element={<NotFound />}
+        >
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
