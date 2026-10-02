@@ -1,4 +1,3 @@
-import PlaceCardTypeBadge from '../place-card-type-badge/place-card-type-badge';
 import { PlaceCardType } from './place-card-type';
 
 type Rating = 0 | 20 | 40 | 60 | 80 | 100
@@ -56,7 +55,7 @@ function PlaceCard({
         <h2 className="place-card__name">
           <a href="#">{title}</a>
         </h2>
-        <PlaceCardTypeBadge type={type} />
+        <p className="place-card__type">{type}</p>
       </div>
     </article >
   );
