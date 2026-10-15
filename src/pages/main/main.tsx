@@ -1,13 +1,21 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import Header from '../../components/header/header';
-import PlaceCard from '../../components/place-card/place-card';
-import { PlaceCardType } from '../../components/place-card/place-card-type';
+import PlacesList from '../../components/places-list/places-list';
+import { PlaceCard } from '../../types/place-card';
 
+type MainProps = {
+  offers: PlaceCard[];
+};
 
-type Props = {
-  placesCount: number;
-}
+function Main({ offers }: MainProps): JSX.Element {
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
-function Main({ placesCount }: Props): JSX.Element {
+  const handleOfferHover = (offerId: string | null) => {
+    setActiveOfferId(offerId);
+  };
+
   return (
     <div className="page page--gray page--main">
       <Header isLogoActive favoriteCount={3} />
@@ -18,34 +26,34 @@ function Main({ placesCount }: Props): JSX.Element {
           <section className="locations container">
             <ul className="locations__list tabs__list">
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <Link className="locations__item-link tabs__item" to="/">
                   <span>Paris</span>
-                </a>
+                </Link>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <Link className="locations__item-link tabs__item" to="/">
                   <span>Cologne</span>
-                </a>
+                </Link>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <Link className="locations__item-link tabs__item" to="/">
                   <span>Brussels</span>
-                </a>
+                </Link>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active">
+                <Link className="locations__item-link tabs__item tabs__item--active" to="/">
                   <span>Amsterdam</span>
-                </a>
+                </Link>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <Link className="locations__item-link tabs__item" to="/">
                   <span>Hamburg</span>
-                </a>
+                </Link>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <Link className="locations__item-link tabs__item" to="/">
                   <span>Dusseldorf</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </section>
@@ -64,33 +72,32 @@ function Main({ placesCount }: Props): JSX.Element {
                   </svg>
                 </span>
                 <ul className="places__options places__options--custom places__options--opened">
-                  <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                  <li className="places__option" tabIndex={0}>Price: low to high</li>
-                  <li className="places__option" tabIndex={0}>Price: high to low</li>
-                  <li className="places__option" tabIndex={0}>Top rated first</li>
+                  <li
+                    className="places__option places__option--active"
+                    tabIndex={0}
+                  >
+                    Popular
+                  </li>
+                  <li className="places__option" tabIndex={0}>
+                    Price: low to high
+                  </li>
+                  <li className="places__option" tabIndex={0}>
+                    Price: high to low
+                  </li>
+                  <li className="places__option" tabIndex={0}>
+                    Top rated first
+                  </li>
                 </ul>
               </form>
-              <div className="cities__places-list places__list tabs__content">
-                {Array.from({ length: placesCount }, (_, i) => (
-                  <PlaceCard
-                    key={`place-${i}`}
-                    title="Beautiful &amp; luxurious apartment at great location"
-                    type={PlaceCardType.Apartment}
-                    img="img/apartment-01.jpg"
-                    cost={120}
-                    rating={80}
-                    isPremium
-                  />
-                ))}
-              </div>
+              <PlacesList offers={offers} activeOfferId={activeOfferId} onOfferTypeChange={handleOfferHover} />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map"></section>
             </div>
           </div>
         </div>
-      </main >
-    </div >
+      </main>
+    </div>
   );
 }
 

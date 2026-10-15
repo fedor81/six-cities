@@ -2,7 +2,7 @@ function NotFound(): JSX.Element {
   return (
     <>
       <p>404 Not Found</p>
-      < a href="/" >На главную</a >
+      <a href="/">На главную</a>
     </>
   );
 }

@@ -1,3 +1,5 @@
+import { Link, NavLink } from 'react-router-dom';
+
 type HeaderProps = {
   isLoggedIn?: boolean;
   favoriteCount?: number;
@@ -17,13 +19,17 @@ function Header({
         <div className="header__wrapper">
           <div className="header__left">
             {isLogoActive ? (
-              <a className="header__logo-link header__logo-link--active">
+              <NavLink
+                className="header__logo-link header__logo-link--active"
+                to="/"
+                end
+              >
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </a>
+              </NavLink>
             ) : (
-              <a className="header__logo-link" href="main.html">
+              <NavLink className="header__logo-link" to="/" end>
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </a>
+              </NavLink>
             )}
           </div>
           {showNavigation && (
@@ -47,11 +53,14 @@ function Header({
                   </>
                 ) : (
                   <li className="header__nav-item user">
-                    <a className="header__nav-link header__nav-link--profile" href="#">
+                    <Link
+                      className="header__nav-link header__nav-link--profile"
+                      to="/login"
+                    >
                       <div className="header__avatar-wrapper user__avatar-wrapper">
                       </div>
                       <span className="header__login">Sign in</span>
-                    </a>
+                    </Link>
                   </li>
                 )}
               </ul>

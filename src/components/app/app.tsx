@@ -1,49 +1,37 @@
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
+
 import { AppRoute, AuthorizationStatus } from '../../const';
+import { PlaceCard } from '../../types/place-card';
+import { OfferDetail } from '../../types/offer';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import NotFound from '../../pages/not-found/not-found';
 import Offer from '../../pages/offer/offer';
-import ProtectedRoute from '../private-route/private-route';
+import PrivateRoute from '../private-route/private-route';
 
 type AppProps = {
-  placesCount: number;
-}
+  offers: PlaceCard[];
+  offerDetails: Record<string, OfferDetail>;
+};
 
-function App({ placesCount }: AppProps): JSX.Element {
+function App({ offers, offerDetails }: AppProps): JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path={AppRoute.Main}
-          element={<Main placesCount={placesCount} />}
-        >
-        </Route>
-        <Route
-          path={AppRoute.Login}
-          element={<Login />}
-        >
-        </Route>
+        <Route path={AppRoute.Main} element={<Main offers={offers} />}></Route>
+        <Route path={AppRoute.Login} element={<Login />}></Route>
         <Route
           path={AppRoute.Favorites}
           element={
-            <ProtectedRoute authorizationStatus={AuthorizationStatus.NoAuth}>
-              <Favorites />
-            </ProtectedRoute>
+            <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
+              <Favorites offers={offers} />
+            </PrivateRoute>
           }
         >
         </Route>
-        <Route
-          path={`${AppRoute.Offer }/:id`}
-          element={<Offer />}
-        >
-        </Route>
-        <Route
-          path="*"
-          element={<NotFound />}
-        >
-        </Route>
+        <Route path={`${AppRoute.Offer}/:id`} element={<Offer offerDetails={offerDetails} />}></Route>
+        <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </BrowserRouter>
   );

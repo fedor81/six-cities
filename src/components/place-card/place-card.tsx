@@ -1,18 +1,17 @@
-import { PlaceCardType } from './place-card-type';
+import { Link } from 'react-router-dom';
 
-type Rating = 0 | 20 | 40 | 60 | 80 | 100
+import type { PlaceCard } from '../../types/place-card';
+import { AppRoute } from '../../const';
+import OfferCardBody from '../offer-card/offer-card-body';
 
-type PlaceCardProps = {
-  img: string;
-  cost: number;
-  title: string;
-  type: PlaceCardType;
-  rating: Rating;
-  isPremium?: boolean;
-  isBookmarked?: boolean;
-}
+type PlaceCardProps = PlaceCard & {
+  isActive: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+};
 
 function PlaceCard({
+  id,
   img,
   cost,
   title,
@@ -20,44 +19,36 @@ function PlaceCard({
   rating,
   isPremium,
   isBookmarked,
+  isActive,
+  onMouseEnter,
+  onMouseLeave,
 }: PlaceCardProps): JSX.Element {
   return (
-    <article className="cities__card place-card">
-      {isPremium && (
-        <div className="place-card__mark">
-          <span>Premium</span>
-        </div>
-      )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
-        <a href="#">
-          <img className="place-card__image" src={img} width="260" height="200" alt="Place image" />
-        </a>
-      </div>
-      <div className="place-card__info">
-        <div className="place-card__price-wrapper">
-          <div className="place-card__price">
-            <b className="place-card__price-value">&euro;{cost}</b>
-            <span className="place-card__price-text">&#47;&nbsp;night</span>
-          </div>
-          <button className={`place-card__bookmark-button ${isBookmarked && 'place-card__bookmark-button--active'} button`} type="button">
-            <svg className="place-card__bookmark-icon" width="18" height="19">
-              <use xlinkHref="#icon-bookmark"></use>
-            </svg>
-            <span className="visually-hidden">In bookmarks</span>
-          </button>
-        </div>
-        <div className="place-card__rating rating">
-          <div className="place-card__stars rating__stars">
-            <span style={{ width: `${rating}%` }}></span>
-            <span className="visually-hidden">Rating</span>
-          </div>
-        </div>
-        <h2 className="place-card__name">
-          <a href="#">{title}</a>
-        </h2>
-        <p className="place-card__type">{type}</p>
-      </div>
-    </article >
+    <article
+      className={`cities__card place-card ${isActive ? 'place-card--active' : ''}`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <OfferCardBody
+        isPremium={isPremium}
+        rating={rating}
+        cost={cost}
+        title={title}
+        type={type}
+        imageLink={
+          <Link to={`${AppRoute.Offer}/${id}`}>
+            <img
+              className="place-card__image"
+              src={img}
+              width={260}
+              height={200}
+              alt="Place image"
+            />
+          </Link>
+        }
+        bookmarkActive={isBookmarked}
+      />
+    </article>
   );
 }
 
