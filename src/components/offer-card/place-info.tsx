@@ -1,4 +1,4 @@
-import type { PlaceCardType } from '../../../types/place-card';
+import type { PlaceCardType } from '../../types/place-card';
 
 type PlaceInfoProps = {
   title: string;

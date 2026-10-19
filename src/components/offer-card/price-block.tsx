@@ -1,4 +1,4 @@
-import BookmarkButton from '../bookmark-button/bookmark-button';
+import BookmarkButton from './bookmark-button';
 
 type PriceBlockProps = {
   cost: number;

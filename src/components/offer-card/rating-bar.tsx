@@ -1,4 +1,4 @@
-import type { Rating } from '../../../types/place-card';
+import type { Rating } from '../../types/place-card';
 
 type RatingBarProps = {
   rating: Rating;
