@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import type { OfferDetail } from '../../types/offer';
 import Header from '../../components/header/header';
 import ReviewForm from '../../components/review-form/review-form';
+import ReviewList from '../../components/reviews-list/review-list';
 import { getRatingPercentage, getNumericRating } from '../../utils/rating';
 
 type OfferProps = {
@@ -32,8 +33,6 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
   const nearPlaces = Object.values(offerDetails)
     .filter((o) => o.id !== offer.id)
     .slice(0, 3);
-
-  const reviewsCount = offer.reviews.length;
 
   const offerRatingPercentage = getRatingPercentage(offer.rating);
 
@@ -123,38 +122,8 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
                   </p>
                 </div>
               </div>
-              <section className="offer__reviews reviews">
-                <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviewsCount}</span></h2>
-                <ul className="reviews__list">
-                  {offer.reviews.map((review) => (
-                    <li className="reviews__item" key={review.id}>
-                      <div className="reviews__user user">
-                        <div className="reviews__avatar-wrapper user__avatar-wrapper">
-                          <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Review avatar" />
-                        </div>
-                        <span className="reviews__user-name">
-                          {review.user.name}
-                        </span>
-                      </div>
-                      <div className="reviews__info">
-                        <div className="reviews__rating rating">
-                          <div className="reviews__stars rating__stars">
-                            <span style={{ width: getRatingPercentage(review.rating * 20) }} />
-                            <span className="visually-hidden">Rating</span>
-                          </div>
-                        </div>
-                        <p className="reviews__text">
-                          {review.comment}
-                        </p>
-                        <time className="reviews__time" dateTime={review.date}>
-                          {new Date(review.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                        </time>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <ReviewForm />
-              </section>
+              <ReviewList reviews={offer.reviews} />
+              <ReviewForm />
             </div>
           </div>
           <section className="offer__map map" />
