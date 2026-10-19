@@ -1,8 +1,6 @@
 import type { PlaceCard } from '../../types/place-card';
 import OfferCardBody from '../offer-card/offer-card-body';
 
-type FavoriteCardProps = PlaceCard;
-
 function FavoriteCard({
   img,
   cost,
@@ -10,7 +8,7 @@ function FavoriteCard({
   type,
   rating,
   isPremium,
-}: FavoriteCardProps): JSX.Element {
+}: PlaceCard): JSX.Element {
   return (
     <article className="favorites__card place-card">
       <OfferCardBody

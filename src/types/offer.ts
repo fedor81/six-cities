@@ -11,7 +11,7 @@ export type Review = {
   date: string;
   user: User;
   comment: string;
-  rating: number; // 1-5
+  rating: 1 | 2 | 3 | 4 | 5;
 };
 
 export type OfferDetail = PlaceCard & {

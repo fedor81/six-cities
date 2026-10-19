@@ -35,6 +35,8 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
 
   const reviewsCount = offer.reviews.length;
 
+  const offerRatingPercentage = getRatingPercentage(offer.rating);
+
   return (
     <div className="page">
       <Header favoriteCount={3} />
@@ -70,7 +72,7 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{ width: getRatingPercentage(offer.rating) }} />
+                  <span style={{ width: offerRatingPercentage }} />
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">{getNumericRating(offer.rating)}</span>

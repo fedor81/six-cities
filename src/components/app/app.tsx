@@ -1,8 +1,8 @@
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import { PlaceCard } from '../../types/place-card';
-import { OfferDetail } from '../../types/offer';
+import type { PlaceCard } from '../../types/place-card';
+import type { OfferDetail } from '../../types/offer';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -19,8 +19,8 @@ function App({ offers, offerDetails }: AppProps): JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={AppRoute.Main} element={<Main offers={offers} />}></Route>
-        <Route path={AppRoute.Login} element={<Login />}></Route>
+        <Route path={AppRoute.Main} element={<Main offers={offers} />} />
+        <Route path={AppRoute.Login} element={<Login />} />
         <Route
           path={AppRoute.Favorites}
           element={
@@ -28,10 +28,12 @@ function App({ offers, offerDetails }: AppProps): JSX.Element {
               <Favorites offers={offers} />
             </PrivateRoute>
           }
-        >
-        </Route>
-        <Route path={`${AppRoute.Offer}/:id`} element={<Offer offerDetails={offerDetails} />}></Route>
-        <Route path="*" element={<NotFound />}></Route>
+        />
+        <Route
+          path={`${AppRoute.Offer}/:id`}
+          element={<Offer offerDetails={offerDetails} />}
+        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
