@@ -1,5 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 
+import { AppRoute } from '../../const';
+
 type HeaderProps = {
   isLoggedIn?: boolean;
   favoriteCount?: number;
@@ -21,13 +23,13 @@ function Header({
             {isLogoActive ? (
               <NavLink
                 className="header__logo-link header__logo-link--active"
-                to="/"
+                to={AppRoute.Main}
                 end
               >
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </NavLink>
             ) : (
-              <NavLink className="header__logo-link" to="/" end>
+              <NavLink className="header__logo-link" to={AppRoute.Main} end>
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
               </NavLink>
             )}
@@ -55,7 +57,7 @@ function Header({
                   <li className="header__nav-item user">
                     <Link
                       className="header__nav-link header__nav-link--profile"
-                      to="/login"
+                      to={AppRoute.Login}
                     >
                       <div className="header__avatar-wrapper user__avatar-wrapper">
                       </div>

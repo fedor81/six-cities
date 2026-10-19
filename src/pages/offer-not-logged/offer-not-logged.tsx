@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { AppRoute } from '../../const';
 import Header from '../../components/header/header';
 
 function OfferNotLogged(): JSX.Element {
@@ -163,7 +164,7 @@ function OfferNotLogged(): JSX.Element {
             <div className="near-places__list places__list">
               <article className="near-places__card place-card">
                 <div className="near-places__image-wrapper place-card__image-wrapper">
-                  <Link to="/offer/1">
+                  <Link to={`${AppRoute.Offer}/1`}>
                     <img className="place-card__image" src="img/room.jpg" width="260" height="200" alt="Place image" />
                   </Link>
                 </div>
@@ -187,7 +188,7 @@ function OfferNotLogged(): JSX.Element {
                     </div>
                   </div>
                   <h2 className="place-card__name">
-                    <Link to="/offer/1">Wood and stone place</Link>
+                    <Link to={`${AppRoute.Offer}/1`}>Wood and stone place</Link>
                   </h2>
                   <p className="place-card__type">Room</p>
                 </div>
@@ -195,7 +196,7 @@ function OfferNotLogged(): JSX.Element {
 
               <article className="near-places__card place-card">
                 <div className="near-places__image-wrapper place-card__image-wrapper">
-                  <Link to="/offer/2">
+                  <Link to={`${AppRoute.Offer}/2`}>
                     <img className="place-card__image" src="img/apartment-02.jpg" width="260" height="200" alt="Place image" />
                   </Link>
                 </div>
@@ -219,7 +220,7 @@ function OfferNotLogged(): JSX.Element {
                     </div>
                   </div>
                   <h2 className="place-card__name">
-                    <Link to="/offer/2">Canal View Prinsengracht</Link>
+                    <Link to={`${AppRoute.Offer}/2`}>Canal View Prinsengracht</Link>
                   </h2>
                   <p className="place-card__type">Apartment</p>
                 </div>
@@ -230,7 +231,7 @@ function OfferNotLogged(): JSX.Element {
                   <span>Premium</span>
                 </div>
                 <div className="near-places__image-wrapper place-card__image-wrapper">
-                  <Link to="/offer/3">
+                  <Link to={`${AppRoute.Offer}/3`}>
                     <img className="place-card__image" src="img/apartment-03.jpg" width="260" height="200" alt="Place image" />
                   </Link>
                 </div>
@@ -254,7 +255,7 @@ function OfferNotLogged(): JSX.Element {
                     </div>
                   </div>
                   <h2 className="place-card__name">
-                    <Link to="/offer/3">Nice, cozy, warm big bed apartment</Link>
+                    <Link to={`${AppRoute.Offer}/3`}>Nice, cozy, warm big bed apartment</Link>
                   </h2>
                   <p className="place-card__type">Apartment</p>
                 </div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
+import { AppRoute } from '../../const';
 import type { OfferDetail } from '../../types/offer';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
@@ -143,7 +144,7 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
                     </div>
                   )}
                   <div className="near-places__image-wrapper place-card__image-wrapper">
-                    <Link to={`/offer/${place.id}`}>
+                    <Link to={`${AppRoute.Offer}/${place.id}`}>
                       <img className="place-card__image" src={place.img} width="260" height="200" alt="Place image" />
                     </Link>
                   </div>
@@ -177,7 +178,7 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
                       </div>
                     </div>
                     <h2 className="place-card__name">
-                      <Link to={`/offer/${place.id}`}>{place.title}</Link>
+                      <Link to={`${AppRoute.Offer}/${place.id}`}>{place.title}</Link>
                     </h2>
                     <p className="place-card__type">{place.type}</p>
                   </div>
