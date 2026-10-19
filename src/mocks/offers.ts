@@ -14,8 +14,8 @@ export const mockOffers: PlaceCard[] = [
     city: {
       name: 'Amsterdam',
       location: {
-        latitude: 52.354367,
-        longitude: 4.677622,
+        latitude: 52.3909553943508,
+        longitude: 4.85309666406198,
         zoom: 13,
       },
     },
@@ -30,10 +30,10 @@ export const mockOffers: PlaceCard[] = [
     isPremium: false,
     isBookmarked: true,
     city: {
-      name: 'Cologne',
+      name: 'Amsterdam',
       location: {
-        latitude: 50.938361,
-        longitude: 6.959974,
+        latitude: 52.3609553943508,
+        longitude: 4.85309666406198,
         zoom: 13,
       },
     },
@@ -50,8 +50,8 @@ export const mockOffers: PlaceCard[] = [
     city: {
       name: 'Amsterdam',
       location: {
-        latitude: 52.3672523,
-        longitude: 4.903096,
+        latitude: 52.3909553943508,
+        longitude: 4.929309666406198,
         zoom: 12,
       },
     },
@@ -151,8 +151,8 @@ export const mockOfferDetails: Record<string, OfferDetail> = {
     city: {
       name: 'Amsterdam',
       location: {
-        latitude: 52.354367,
-        longitude: 4.677622,
+        latitude: 52.3909553943508,
+        longitude: 4.85309666406198,
         zoom: 13,
       },
     },
@@ -182,10 +182,10 @@ export const mockOfferDetails: Record<string, OfferDetail> = {
     isPremium: false,
     isBookmarked: true,
     city: {
-      name: 'Cologne',
+      name: 'Amsterdam',
       location: {
-        latitude: 50.938361,
-        longitude: 6.959974,
+        latitude: 52.3609553943508,
+        longitude: 4.85309666406198,
         zoom: 13,
       },
     },
@@ -217,8 +217,8 @@ export const mockOfferDetails: Record<string, OfferDetail> = {
     city: {
       name: 'Amsterdam',
       location: {
-        latitude: 52.3672523,
-        longitude: 4.903096,
+        latitude: 52.3909553943508,
+        longitude: 4.929309666406198,
         zoom: 12,
       },
     },
@@ -248,10 +248,10 @@ export const mockOfferDetails: Record<string, OfferDetail> = {
     isPremium: false,
     isBookmarked: false,
     city: {
-      name: 'Paris',
+      name: 'Amsterdam',
       location: {
-        latitude: 48.85661,
-        longitude: 2.351499,
+        latitude: 52.3809553943508,
+        longitude: 4.939309666406198,
         zoom: 13,
       },
     },
