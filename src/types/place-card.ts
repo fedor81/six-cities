@@ -1,5 +1,16 @@
 export type Rating = 0 | 20 | 40 | 60 | 80 | 100;
 
+export type Location = {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+};
+
+export type City = {
+  name: string;
+  location: Location;
+};
+
 export type PlaceCard = {
   id: string;
   img: string;
@@ -9,14 +20,7 @@ export type PlaceCard = {
   rating: Rating;
   isPremium: boolean;
   isBookmarked: boolean;
-  city: {
-    name: string;
-    location: {
-      latitude: number;
-      longitude: number;
-      zoom: number;
-    };
-  };
+  city: City;
 };
 
 export enum PlaceCardType {
