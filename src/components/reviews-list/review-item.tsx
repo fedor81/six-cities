@@ -1,14 +1,7 @@
+import { formatDate } from '../../utils/date';
 import type { Review } from '../../types/offer';
 
 type ReviewItemProps = Review;
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-  }).format(date);
-}
 
 function ReviewItem({ user, comment, rating, date }: ReviewItemProps): JSX.Element {
   const starsWidth = `${(rating / 5) * 100}%`;
