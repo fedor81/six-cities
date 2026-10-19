@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Header from '../../components/header/header';
+import Map from '../../components/map/map';
 import PlacesList from '../../components/places-list/places-list';
 import { PlaceCard } from '../../types/place-card';
+import { AppRoute } from '../../const';
 
 type MainProps = {
   offers: PlaceCard[];
@@ -11,6 +13,8 @@ type MainProps = {
 
 function Main({ offers }: MainProps): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+
+  const city = offers[0]?.city;
 
   const handleOfferHover = (offerId: string | null) => {
     setActiveOfferId(offerId);
@@ -41,7 +45,10 @@ function Main({ offers }: MainProps): JSX.Element {
                 </Link>
               </li>
               <li className="locations__item">
-                <Link className="locations__item-link tabs__item tabs__item--active" to="/">
+                <Link
+                  className="locations__item-link tabs__item tabs__item--active"
+                  to={AppRoute.Main}
+                >
                   <span>Amsterdam</span>
                 </Link>
               </li>
@@ -89,10 +96,20 @@ function Main({ offers }: MainProps): JSX.Element {
                   </li>
                 </ul>
               </form>
-              <PlacesList offers={offers} activeOfferId={activeOfferId} onOfferTypeChange={handleOfferHover} />
+              <PlacesList
+                offers={offers}
+                activeOfferId={activeOfferId}
+                onOfferTypeChange={handleOfferHover}
+              />
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section className="cities__map map">
+                <Map
+                  city={city}
+                  offers={offers}
+                  selectedOfferId={activeOfferId}
+                />
+              </section>
             </div>
           </div>
         </div>
