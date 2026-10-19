@@ -1,6 +1,6 @@
 import type { PlaceCardType, Rating } from '../../types/place-card';
 
-import { PremiumBadge, RatingBar, PriceBlock, PlaceInfo, ImageWrapper } from '.';
+import { PremiumBadge, RatingBar, PriceBlock, PlaceInfo } from '.';
 
 export type OfferCardBodyProps = {
   isPremium: boolean;
@@ -24,7 +24,9 @@ function OfferCardBody({
   return (
     <>
       <PremiumBadge isPremium={isPremium} />
-      <ImageWrapper link={imageLink} />
+      <div className="place-card__image-wrapper">
+        {imageLink}
+      </div>
       <div className="place-card__info">
         <PriceBlock cost={cost} bookmarkActive={bookmarkActive} />
         <RatingBar rating={rating} />
