@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import type { OfferDetail } from '../../types/offer';
 import Header from '../../components/header/header';
+import Map from '../../components/map/map';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewList from '../../components/reviews-list/review-list';
 import { getRatingPercentage, getNumericRating } from '../../utils/rating';
@@ -126,7 +127,9 @@ function Offer({ offerDetails }: OfferProps): JSX.Element {
               <ReviewForm />
             </div>
           </div>
-          <section className="offer__map map" />
+          <section className="offer__map map">
+            <Map city={offer.city} offers={nearPlaces} selectedOfferId={offer.id} />
+          </section>
         </section>
         <div className="container">
           <section className="near-places places">
