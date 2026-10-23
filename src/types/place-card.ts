@@ -1,10 +1,10 @@
 export type Rating = 0 | 20 | 40 | 60 | 80 | 100;
 
-export type Location = {
+export type Location = Readonly<{
   latitude: number;
   longitude: number;
   zoom: number;
-};
+}>;
 
 export type City = {
   name: string;

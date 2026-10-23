@@ -3,9 +3,7 @@ import { Icon, Marker, layerGroup } from 'leaflet';
 import useMap from '../../hooks/use-map';
 import { PlaceCard, City } from '../../types/place-card';
 import 'leaflet/dist/leaflet.css';
-
-const URL_MARKER_DEFAULT = '/img/pin.svg';
-const URL_MARKER_CURRENT = '/img/pin-active.svg';
+import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from './map-config';
 
 type MapProps = {
   city: City;

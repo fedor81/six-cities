@@ -104,11 +104,13 @@ function Main({ offers }: MainProps): JSX.Element {
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                <Map
-                  city={city}
-                  offers={offers}
-                  selectedOfferId={activeOfferId}
-                />
+                {city && (
+                  <Map
+                    city={city}
+                    offers={offers}
+                    selectedOfferId={activeOfferId}
+                  />
+                )}
               </section>
             </div>
           </div>
