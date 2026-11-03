@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { CITIES } from '../const';
 import { City, PlaceCard } from '../types/place-card';
 import { changeCity, fillOffers } from './action';
 
@@ -8,14 +9,7 @@ export type InitialState = {
 };
 
 const initialState: InitialState = {
-  city: {
-    name: 'Paris',
-    location: {
-      latitude: 48.85661,
-      longitude: 2.351499,
-      zoom: 12,
-    },
-  },
+  city: CITIES[0],
   offers: [],
 };
 
