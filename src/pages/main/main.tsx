@@ -1,20 +1,20 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import PlacesList from '../../components/places-list/places-list';
-import { PlaceCard } from '../../types/place-card';
 import { AppRoute } from '../../const';
+import type { RootState } from '../../store';
 
-type MainProps = {
-  offers: PlaceCard[];
-};
-
-function Main({ offers }: MainProps): JSX.Element {
+function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
-  const city = offers[0]?.city;
+  const city = useSelector((state: RootState) => state.city);
+  const offers = useSelector((state: RootState) => state.offers);
+
+  const cityOffers = offers.filter((offer) => offer.city.name === city.name);
 
   const handleOfferHover = (offerId: string | null) => {
     setActiveOfferId(offerId);
@@ -69,7 +69,7 @@ function Main({ offers }: MainProps): JSX.Element {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">312 places to stay in Amsterdam</b>
+              <b className="places__found">{cityOffers.length} places to stay in {city.name}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -97,20 +97,18 @@ function Main({ offers }: MainProps): JSX.Element {
                 </ul>
               </form>
               <PlacesList
-                offers={offers}
+                offers={cityOffers}
                 activeOfferId={activeOfferId}
                 onOfferTypeChange={handleOfferHover}
               />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                {city && (
-                  <Map
-                    city={city}
-                    offers={offers}
-                    selectedOfferId={activeOfferId}
-                  />
-                )}
+                <Map
+                  city={city}
+                  offers={cityOffers}
+                  selectedOfferId={activeOfferId}
+                />
               </section>
             </div>
           </div>
