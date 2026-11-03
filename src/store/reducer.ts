@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createReducer } from '@reduxjs/toolkit';
 import { City, PlaceCard } from '../types/place-card';
+import { changeCity, fillOffers } from './action';
 
 export type InitialState = {
   city: City;
@@ -18,19 +19,14 @@ const initialState: InitialState = {
   offers: [],
 };
 
-const dataSlice = createSlice({
-  name: 'data',
-  initialState,
-  reducers: {
-    setCity: (state, action: PayloadAction<City>) => {
+const reducer = createReducer(initialState, (builder) => {
+  builder
+    .addCase(changeCity, (state, action) => {
       state.city = action.payload;
-    },
-    setOffers: (state, action: PayloadAction<PlaceCard[]>) => {
+    })
+    .addCase(fillOffers, (state, action) => {
       state.offers = action.payload;
-    },
-  },
+    });
 });
 
-export const { setCity, setOffers } = dataSlice.actions;
-
-export const reducer = dataSlice.reducer;
+export { reducer };
