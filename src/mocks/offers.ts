@@ -1,7 +1,8 @@
+import { CITIES } from '../const';
 import { PlaceCard, PlaceCardType, Rating } from '../types/place-card';
 import { OfferDetail, Review, User } from '../types/offer';
 
-export const mockOffers: PlaceCard[] = [
+const baseOffers: PlaceCard[] = [
   {
     id: 'offer-1',
     img: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -57,6 +58,66 @@ export const mockOffers: PlaceCard[] = [
     },
   },
 ];
+
+type ExtraOffer = {
+  id: string;
+  title: string;
+  cityName: string;
+  cost: number;
+  type: PlaceCardType;
+  rating: Rating;
+  isPremium: boolean;
+  isBookmarked: boolean;
+};
+
+const EXTRA_OFFERS: ExtraOffer[] = [
+  { id: 'offer-5', title: 'Charming studio near the Louvre', cityName: 'Paris', cost: 130, type: PlaceCardType.Apartment, rating: 100, isPremium: true, isBookmarked: false },
+  { id: 'offer-6', title: 'Cozy room in Montmartre', cityName: 'Paris', cost: 75, type: PlaceCardType.Room, rating: 60, isPremium: false, isBookmarked: true },
+  { id: 'offer-7', title: 'Elegant apartment with Eiffel Tower view', cityName: 'Paris', cost: 220, type: PlaceCardType.Apartment, rating: 80, isPremium: true, isBookmarked: false },
+  { id: 'offer-8', title: 'Modern flat near the cathedral', cityName: 'Cologne', cost: 110, type: PlaceCardType.Apartment, rating: 80, isPremium: false, isBookmarked: true },
+  { id: 'offer-9', title: 'Quiet room by the Rhine', cityName: 'Cologne', cost: 70, type: PlaceCardType.Room, rating: 60, isPremium: false, isBookmarked: false },
+  { id: 'offer-10', title: 'Bright apartment at Grand Place', cityName: 'Brussels', cost: 140, type: PlaceCardType.Apartment, rating: 100, isPremium: true, isBookmarked: true },
+  { id: 'offer-11', title: 'Compact studio in the EU quarter', cityName: 'Brussels', cost: 95, type: PlaceCardType.Room, rating: 40, isPremium: false, isBookmarked: false },
+  { id: 'offer-12', title: 'Loft in the Speicherstadt', cityName: 'Hamburg', cost: 190, type: PlaceCardType.Apartment, rating: 100, isPremium: true, isBookmarked: false },
+  { id: 'offer-13', title: 'Room with harbour view', cityName: 'Hamburg', cost: 85, type: PlaceCardType.Room, rating: 60, isPremium: false, isBookmarked: true },
+  { id: 'offer-14', title: 'Apartment on the Konigsallee', cityName: 'Dusseldorf', cost: 160, type: PlaceCardType.Apartment, rating: 80, isPremium: true, isBookmarked: false },
+  { id: 'offer-15', title: 'Budget room in the old town', cityName: 'Dusseldorf', cost: 65, type: PlaceCardType.Room, rating: 40, isPremium: false, isBookmarked: false },
+];
+
+const EXTRA_OFFER_IMAGES = [
+  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1780427670049-43aa7921e3f0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+];
+
+const extraOffers: PlaceCard[] = EXTRA_OFFERS.map((offer, index) => {
+  const city = CITIES.find((item) => item.name === offer.cityName);
+
+  if (!city) {
+    throw new Error(`Unknown city: ${offer.cityName}`);
+  }
+
+  return {
+    id: offer.id,
+    img: EXTRA_OFFER_IMAGES[index % EXTRA_OFFER_IMAGES.length],
+    cost: offer.cost,
+    title: offer.title,
+    type: offer.type,
+    rating: offer.rating,
+    isPremium: offer.isPremium,
+    isBookmarked: offer.isBookmarked,
+    city: {
+      name: city.name,
+      location: {
+        latitude: city.location.latitude + ((index % 3) - 1) * 0.01,
+        longitude: city.location.longitude + ((index % 5) - 2) * 0.01,
+        zoom: city.location.zoom,
+      },
+    },
+  };
+});
+
+export const mockOffers: PlaceCard[] = [...baseOffers, ...extraOffers];
 
 const mockUsers: Record<string, User> = {
   'user-1': {
@@ -138,7 +199,33 @@ const mockReviews: Record<string, Review[]> = {
   'offer-4': [],
 };
 
+const mockHosts = Object.values(mockUsers);
+
+const extraOfferDetails = Object.fromEntries(
+  extraOffers.map((offer, index): [string, OfferDetail] => [
+    offer.id,
+    {
+      ...offer,
+      description: `${offer.title} — a comfortable ${offer.type.toLowerCase()} in the heart of ${offer.city.name}.`,
+      images: [
+        offer.img,
+        'img/room.jpg',
+        'img/apartment-01.jpg',
+        'img/apartment-02.jpg',
+        'img/apartment-03.jpg',
+        'img/studio-01.jpg',
+      ],
+      goods: ['Wi-Fi', 'Kitchen', 'Heating', 'Fridge'],
+      host: mockHosts[index % mockHosts.length],
+      bedrooms: offer.type === PlaceCardType.Apartment ? 2 : 1,
+      maxAdults: offer.type === PlaceCardType.Apartment ? 3 : 2,
+      reviews: [],
+    },
+  ]),
+);
+
 export const mockOfferDetails: Record<string, OfferDetail> = {
+  ...extraOfferDetails,
   'offer-1': {
     id: 'offer-1',
     title: 'Nice, cozy, warm big bed apartment',
