@@ -1,20 +1,27 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
+import CitiesList from '../../components/cities-list/cities-list';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import PlacesList from '../../components/places-list/places-list';
-import { PlaceCard } from '../../types/place-card';
-import { AppRoute } from '../../const';
+import { CITIES } from '../../const';
+import { changeCity } from '../../store/action';
+import type { RootState } from '../../store';
+import type { City } from '../../types/place-card';
 
-type MainProps = {
-  offers: PlaceCard[];
-};
-
-function Main({ offers }: MainProps): JSX.Element {
+function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
-  const city = offers[0]?.city;
+  const city = useSelector((state: RootState) => state.city);
+  const offers = useSelector((state: RootState) => state.offers);
+
+  const cityOffers = offers.filter((offer) => offer.city.name === city.name);
+
+  const handleCityChange = (nextCity: City) => {
+    dispatch(changeCity(nextCity));
+  };
 
   const handleOfferHover = (offerId: string | null) => {
     setActiveOfferId(offerId);
@@ -27,49 +34,17 @@ function Main({ offers }: MainProps): JSX.Element {
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
-          <section className="locations container">
-            <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <Link className="locations__item-link tabs__item" to={AppRoute.Main}>
-                  <span>Paris</span>
-                </Link>
-              </li>
-              <li className="locations__item">
-                <Link className="locations__item-link tabs__item" to={AppRoute.Main}>
-                  <span>Cologne</span>
-                </Link>
-              </li>
-              <li className="locations__item">
-                <Link className="locations__item-link tabs__item" to={AppRoute.Main}>
-                  <span>Brussels</span>
-                </Link>
-              </li>
-              <li className="locations__item">
-                <Link
-                  className="locations__item-link tabs__item tabs__item--active"
-                  to={AppRoute.Main}
-                >
-                  <span>Amsterdam</span>
-                </Link>
-              </li>
-              <li className="locations__item">
-                <Link className="locations__item-link tabs__item" to={AppRoute.Main}>
-                  <span>Hamburg</span>
-                </Link>
-              </li>
-              <li className="locations__item">
-                <Link className="locations__item-link tabs__item" to={AppRoute.Main}>
-                  <span>Dusseldorf</span>
-                </Link>
-              </li>
-            </ul>
-          </section>
+          <CitiesList
+            cities={CITIES}
+            activeCity={city}
+            onCityChange={handleCityChange}
+          />
         </div>
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">312 places to stay in Amsterdam</b>
+              <b className="places__found">{cityOffers.length} places to stay in {city.name}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -97,20 +72,18 @@ function Main({ offers }: MainProps): JSX.Element {
                 </ul>
               </form>
               <PlacesList
-                offers={offers}
+                offers={cityOffers}
                 activeOfferId={activeOfferId}
                 onOfferTypeChange={handleOfferHover}
               />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                {city && (
-                  <Map
-                    city={city}
-                    offers={offers}
-                    selectedOfferId={activeOfferId}
-                  />
-                )}
+                <Map
+                  city={city}
+                  offers={cityOffers}
+                  selectedOfferId={activeOfferId}
+                />
               </section>
             </div>
           </div>

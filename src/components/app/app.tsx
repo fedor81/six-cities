@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
 import type { PlaceCard } from '../../types/place-card';
 import type { OfferDetail } from '../../types/offer';
+import { fillOffers } from '../../store/action';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -16,10 +19,16 @@ type AppProps = {
 };
 
 function App({ offers, offerDetails }: AppProps): JSX.Element {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fillOffers(offers));
+  }, [dispatch, offers]);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={AppRoute.Main} element={<Main offers={offers} />} />
+        <Route path={AppRoute.Main} element={<Main />} />
         <Route path={AppRoute.Login} element={<Login />} />
         <Route
           path={AppRoute.Favorites}
