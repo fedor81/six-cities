@@ -7,6 +7,20 @@ export enum AppRoute {
   Offer = '/offer',
 }
 
+export enum SortingType {
+  Popular = 'Popular',
+  PriceLowToHigh = 'Price: low to high',
+  PriceHighToLow = 'Price: high to low',
+  TopRatedFirst = 'Top rated first',
+}
+
+export const SORTING_OPTIONS: SortingType[] = [
+  SortingType.Popular,
+  SortingType.PriceLowToHigh,
+  SortingType.PriceHighToLow,
+  SortingType.TopRatedFirst,
+];
+
 export enum AuthorizationStatus {
   Auth = 'AUTH',
   NoAuth = 'NO_AUTH',
