@@ -26,10 +26,12 @@ const currentCustomIcon = new Icon({
 function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
   const mapRef = useRef(null);
   const map = useMap(mapRef, city.location);
+  const markersRef = useRef<Record<string, Marker>>({});
 
   useEffect(() => {
     if (map) {
       const markerLayer = layerGroup().addTo(map);
+      const markers: Record<string, Marker> = {};
 
       offers.forEach((offer) => {
         const marker = new Marker({
@@ -37,20 +39,26 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
           lng: offer.city.location.longitude,
         });
 
-        marker.setIcon(
-          selectedOfferId !== null && offer.id === selectedOfferId
-            ? currentCustomIcon
-            : defaultCustomIcon
-        );
-
         marker.addTo(markerLayer);
+        markers[offer.id] = marker;
       });
+
+      markersRef.current = markers;
 
       return () => {
         map.removeLayer(markerLayer);
+        markersRef.current = {};
       };
     }
-  }, [map, offers, selectedOfferId]);
+  }, [map, offers]);
+
+  useEffect(() => {
+    Object.entries(markersRef.current).forEach(([offerId, marker]) => {
+      marker.setIcon(
+        offerId === selectedOfferId ? currentCustomIcon : defaultCustomIcon
+      );
+    });
+  }, [offers, selectedOfferId]);
 
   return <div style={{ height: '100%' }} ref={mapRef} />;
 }
