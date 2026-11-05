@@ -10,6 +10,7 @@ import { CITIES, SortingType } from '../../const';
 import { changeCity } from '../../store/action';
 import type { RootState } from '../../store';
 import type { City } from '../../types/place-card';
+import { sortOffers } from '../../utils/sorting';
 
 function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -19,7 +20,10 @@ function Main(): JSX.Element {
   const city = useSelector((state: RootState) => state.city);
   const offers = useSelector((state: RootState) => state.offers);
 
-  const cityOffers = offers.filter((offer) => offer.city.name === city.name);
+  const cityOffers = sortOffers(
+    offers.filter((offer) => offer.city.name === city.name),
+    sorting
+  );
 
   const handleCityChange = (nextCity: City) => {
     dispatch(changeCity(nextCity));
