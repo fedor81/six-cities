@@ -7,6 +7,7 @@ import Map from '../../components/map/map';
 import PlacesList from '../../components/places-list/places-list';
 import ServerError from '../../components/server-error/server-error';
 import SortingOptions from '../../components/sorting-options/sorting-options';
+import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
 import { changeCity } from '../../store/action';
 import type { RootState } from '../../store';
@@ -69,7 +70,7 @@ function Main(): JSX.Element {
                   onSortingChange={handleSortingChange}
                 />
                 {isLoading ? (
-                  <p className="places__found">Загрузка предложений&hellip;</p>
+                  <Spinner />
                 ) : (
                   <PlacesList
                     offers={cityOffers}
