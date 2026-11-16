@@ -1,16 +1,21 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { CITIES } from '../const';
+import { CITIES, DataLoadingStatus } from '../const';
 import { City, PlaceCard } from '../types/place-card';
 import { changeCity, fillOffers } from './action';
+import { fetchOffersAction } from './api-actions';
 
 export type InitialState = {
   city: City;
   offers: PlaceCard[];
+  offersStatus: DataLoadingStatus;
+  offersError: string | null;
 };
 
 const initialState: InitialState = {
   city: CITIES[0],
   offers: [],
+  offersStatus: DataLoadingStatus.Idle,
+  offersError: null,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -20,6 +25,18 @@ const reducer = createReducer(initialState, (builder) => {
     })
     .addCase(fillOffers, (state, action) => {
       state.offers = action.payload;
+    })
+    .addCase(fetchOffersAction.pending, (state) => {
+      state.offersStatus = DataLoadingStatus.Loading;
+      state.offersError = null;
+    })
+    .addCase(fetchOffersAction.fulfilled, (state, action) => {
+      state.offers = action.payload;
+      state.offersStatus = DataLoadingStatus.Success;
+    })
+    .addCase(fetchOffersAction.rejected, (state, action) => {
+      state.offersStatus = DataLoadingStatus.Error;
+      state.offersError = action.payload ?? 'Не удалось загрузить предложения.';
     });
 });
 

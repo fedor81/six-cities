@@ -5,8 +5,10 @@ import CitiesList from '../../components/cities-list/cities-list';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import PlacesList from '../../components/places-list/places-list';
+import ServerError from '../../components/server-error/server-error';
 import SortingOptions from '../../components/sorting-options/sorting-options';
-import { CITIES, SortingType } from '../../const';
+import Spinner from '../../components/spinner/spinner';
+import { CITIES, DataLoadingStatus, SortingType } from '../../const';
 import { changeCity } from '../../store/action';
 import type { RootState } from '../../store';
 import type { City } from '../../types/place-card';
@@ -19,6 +21,11 @@ function Main(): JSX.Element {
 
   const city = useSelector((state: RootState) => state.city);
   const offers = useSelector((state: RootState) => state.offers);
+  const offersStatus = useSelector((state: RootState) => state.offersStatus);
+  const offersError = useSelector((state: RootState) => state.offersError);
+
+  const isError = offersStatus === DataLoadingStatus.Error;
+  const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;
 
   const cityOffers = sortOffers(
     offers.filter((offer) => offer.city.name === city.name),
@@ -52,28 +59,38 @@ function Main(): JSX.Element {
         </div>
         <div className="cities">
           <div className="cities__places-container container">
-            <section className="cities__places places">
-              <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{cityOffers.length} places to stay in {city.name}</b>
-              <SortingOptions
-                currentSorting={sorting}
-                onSortingChange={handleSortingChange}
-              />
-              <PlacesList
-                offers={cityOffers}
-                activeOfferId={activeOfferId}
-                onOfferTypeChange={handleOfferHover}
-              />
-            </section>
-            <div className="cities__right-section">
-              <section className="cities__map map">
-                <Map
-                  city={city}
-                  offers={cityOffers}
-                  selectedOfferId={activeOfferId}
+            {isError ? (
+              <ServerError message={offersError ?? 'Не удалось загрузить предложения.'} />
+            ) : (
+              <section className="cities__places places">
+                <h2 className="visually-hidden">Places</h2>
+                <b className="places__found">{cityOffers.length} places to stay in {city.name}</b>
+                <SortingOptions
+                  currentSorting={sorting}
+                  onSortingChange={handleSortingChange}
                 />
+                {isLoading ? (
+                  <Spinner />
+                ) : (
+                  <PlacesList
+                    offers={cityOffers}
+                    activeOfferId={activeOfferId}
+                    onOfferTypeChange={handleOfferHover}
+                  />
+                )}
               </section>
-            </div>
+            )}
+            {!isError && (
+              <div className="cities__right-section">
+                <section className="cities__map map">
+                  <Map
+                    city={city}
+                    offers={cityOffers}
+                    selectedOfferId={activeOfferId}
+                  />
+                </section>
+              </div>
+            )}
           </div>
         </div>
       </main>

@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import type { PlaceCard } from '../../types/place-card';
-import type { OfferDetail } from '../../types/offer';
-import { fillOffers } from '../../store/action';
+import type { AppDispatch, RootState } from '../../store';
+import { fetchOffersAction } from '../../store/api-actions';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -13,17 +12,13 @@ import NotFound from '../../pages/not-found/not-found';
 import Offer from '../../pages/offer/offer';
 import PrivateRoute from '../private-route/private-route';
 
-type AppProps = {
-  offers: PlaceCard[];
-  offerDetails: Record<string, OfferDetail>;
-};
-
-function App({ offers, offerDetails }: AppProps): JSX.Element {
-  const dispatch = useDispatch();
+function App(): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
+  const offers = useSelector((state: RootState) => state.offers);
 
   useEffect(() => {
-    dispatch(fillOffers(offers));
-  }, [dispatch, offers]);
+    dispatch(fetchOffersAction());
+  }, [dispatch]);
 
   return (
     <BrowserRouter>
@@ -40,7 +35,7 @@ function App({ offers, offerDetails }: AppProps): JSX.Element {
         />
         <Route
           path={`${AppRoute.Offer}/:id`}
-          element={<Offer offerDetails={offerDetails} />}
+          element={<Offer />}
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
