@@ -9,10 +9,10 @@ import ReviewList from '../../components/reviews-list/review-list';
 import { getRatingPercentage, getNumericRating } from '../../utils/rating';
 
 type OfferProps = {
-  offerDetails: Record<string, OfferDetail>;
+  offerDetails?: Record<string, OfferDetail>;
 };
 
-function Offer({ offerDetails }: OfferProps): JSX.Element {
+function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
   const { id } = useParams<{ id: string }>();
 
   const offer = id ? offerDetails[id] : null;
