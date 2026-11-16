@@ -1,8 +1,10 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+import { fetchOffersAction } from '../../store/api-actions';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -11,7 +13,12 @@ import Offer from '../../pages/offer/offer';
 import PrivateRoute from '../private-route/private-route';
 
 function App(): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
   const offers = useSelector((state: RootState) => state.offers);
+
+  useEffect(() => {
+    dispatch(fetchOffersAction());
+  }, [dispatch]);
 
   return (
     <BrowserRouter>

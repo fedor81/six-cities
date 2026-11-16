@@ -27,6 +27,15 @@ export enum AuthorizationStatus {
   Unknown = 'UNKNOWN',
 }
 
+export enum DataLoadingStatus {
+  Idle = 'IDLE',
+  Loading = 'LOADING',
+  Success = 'SUCCESS',
+  Error = 'ERROR',
+}
+
+export const TOKEN_KEY = 'six-cities-token';
+
 export const CITIES: City[] = [
   {
     name: 'Paris',

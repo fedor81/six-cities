@@ -21,9 +21,12 @@ export type PlaceCard = {
   isPremium: boolean;
   isBookmarked: boolean;
   city: City;
+  location: Location;
 };
 
 export enum PlaceCardType {
   Apartment = 'Apartment',
   Room = 'Room',
+  House = 'House',
+  Hotel = 'Hotel',
 }
