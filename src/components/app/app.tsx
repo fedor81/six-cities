@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
-import { AppRoute, AuthorizationStatus } from '../../const';
+import { AppRoute } from '../../const';
 import type { AppDispatch, RootState } from '../../store';
-import { fetchOffersAction } from '../../store/api-actions';
+import { fetchOffersAction, login } from '../../store/api-actions';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -17,6 +17,7 @@ function App(): JSX.Element {
   const offers = useSelector((state: RootState) => state.offers);
 
   useEffect(() => {
+    dispatch(login());
     dispatch(fetchOffersAction());
   }, [dispatch]);
 
@@ -28,7 +29,7 @@ function App(): JSX.Element {
         <Route
           path={AppRoute.Favorites}
           element={
-            <PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}>
+            <PrivateRoute>
               <Favorites offers={offers} />
             </PrivateRoute>
           }
