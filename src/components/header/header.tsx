@@ -1,20 +1,33 @@
+import { MouseEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
+import type { AppDispatch, RootState } from '../../store';
+import { logout } from '../../store/api-actions';
 
 type HeaderProps = {
-  isLoggedIn?: boolean;
   favoriteCount?: number;
   isLogoActive?: boolean;
   showNavigation?: boolean;
 }
 
 function Header({
-  isLoggedIn = true,
   favoriteCount = 0,
   isLogoActive = false,
   showNavigation = true,
 }: HeaderProps): JSX.Element {
+  const dispatch = useDispatch<AppDispatch>();
+  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+  const user = useSelector((state: RootState) => state.user);
+
+  const isLoggedIn = authorizationStatus === AuthorizationStatus.Auth;
+
+  const handleSignOut = (evt: MouseEvent<HTMLAnchorElement>) => {
+    evt.preventDefault();
+    dispatch(logout());
+  };
+
   return (
     <header className="header">
       <div className="container">
@@ -37,18 +50,34 @@ function Header({
           {showNavigation && (
             <nav className="header__nav">
               <ul className="header__nav-list">
-                {isLoggedIn ? (
+                {isLoggedIn && user ? (
                   <>
                     <li className="header__nav-item user">
-                      <a className="header__nav-link header__nav-link--profile" href="#">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to={AppRoute.Favorites}
+                      >
                         <div className="header__avatar-wrapper user__avatar-wrapper">
+                          {user.avatarUrl && (
+                            <img
+                              className="user__avatar"
+                              src={user.avatarUrl}
+                              width="54"
+                              height="54"
+                              alt="User avatar"
+                            />
+                          )}
                         </div>
-                        <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
+                        <span className="header__user-name user__name">{user.email}</span>
                         <span className="header__favorite-count">{favoriteCount}</span>
-                      </a>
+                      </Link>
                     </li>
                     <li className="header__nav-item">
-                      <a className="header__nav-link" href="#">
+                      <a
+                        className="header__nav-link"
+                        href="#"
+                        onClick={handleSignOut}
+                      >
                         <span className="header__signout">Sign out</span>
                       </a>
                     </li>
