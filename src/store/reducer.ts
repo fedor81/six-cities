@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { CITIES, DataLoadingStatus } from '../const';
+import { AuthorizationStatus, CITIES, DataLoadingStatus } from '../const';
 import { City, PlaceCard } from '../types/place-card';
 import { changeCity, fillOffers } from './action';
 import { fetchOffersAction } from './api-actions';
@@ -9,6 +9,7 @@ export type InitialState = {
   offers: PlaceCard[];
   offersStatus: DataLoadingStatus;
   offersError: string | null;
+  authorizationStatus: AuthorizationStatus;
 };
 
 const initialState: InitialState = {
@@ -16,6 +17,7 @@ const initialState: InitialState = {
   offers: [],
   offersStatus: DataLoadingStatus.Idle,
   offersError: null,
+  authorizationStatus: AuthorizationStatus.Unknown,
 };
 
 const reducer = createReducer(initialState, (builder) => {
