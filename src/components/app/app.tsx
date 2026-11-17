@@ -4,7 +4,7 @@ import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute } from '../../const';
 import type { AppDispatch, RootState } from '../../store';
-import { fetchOffersAction, login } from '../../store/api-actions';
+import { checkAuth, fetchOffersAction } from '../../store/api-actions';
 import Favorites from '../../pages/favorites/favorites';
 import Login from '../../pages/login/login';
 import Main from '../../pages/main/main';
@@ -17,7 +17,7 @@ function App(): JSX.Element {
   const offers = useSelector((state: RootState) => state.offers);
 
   useEffect(() => {
-    dispatch(login());
+    dispatch(checkAuth());
     dispatch(fetchOffersAction());
   }, [dispatch]);
 

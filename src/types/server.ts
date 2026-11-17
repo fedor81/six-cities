@@ -1,5 +1,10 @@
 import type { City, Location } from './place-card';
 
+export type LoginData = {
+  email: string;
+  password: string;
+};
+
 export type AuthInfoResponse = {
   email: string;
   name: string;
