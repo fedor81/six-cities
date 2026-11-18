@@ -10,6 +10,7 @@ import NearPlacesList from '../../components/near-places-list/near-places-list';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewList from '../../components/reviews-list/review-list';
 import RatingBar from '../../components/offer-card/rating-bar';
+import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
 import Spinner from '../../components/spinner/spinner';
 import { getNumericRating } from '../../utils/rating';
 
@@ -83,12 +84,7 @@ function Offer(): JSX.Element {
                 <h1 className="offer__name">
                   {offer.title}
                 </h1>
-                <button className="offer__bookmark-button button" type="button">
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark" />
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+                <OfferBookmarkButton />
               </div>
               <div className="offer__rating rating">
                 <RatingBar rating={offer.rating} />

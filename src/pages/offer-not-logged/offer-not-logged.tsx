@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 import { AppRoute } from '../../const';
 import Header from '../../components/header/header';
+import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
+import BookmarkIcon from '../../components/offer-card/bookmark-icon';
 
 function OfferNotLogged(): JSX.Element {
   return (
@@ -41,12 +43,7 @@ function OfferNotLogged(): JSX.Element {
                 <h1 className="offer__name">
                   Beautiful &amp; luxurious studio at great location
                 </h1>
-                <button className="offer__bookmark-button button" type="button">
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark" />
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+                <OfferBookmarkButton />
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
@@ -175,9 +172,7 @@ function OfferNotLogged(): JSX.Element {
                       <span className="place-card__price-text">&#47;&nbsp;night</span>
                     </div>
                     <button className="place-card__bookmark-button place-card__bookmark-button--active button" type="button">
-                      <svg className="place-card__bookmark-icon" width="18" height="19">
-                        <use xlinkHref="#icon-bookmark" />
-                      </svg>
+                      <BookmarkIcon width={18} height={19} className="place-card__bookmark-icon" />
                       <span className="visually-hidden">In bookmarks</span>
                     </button>
                   </div>
@@ -207,9 +202,7 @@ function OfferNotLogged(): JSX.Element {
                       <span className="place-card__price-text">&#47;&nbsp;night</span>
                     </div>
                     <button className="place-card__bookmark-button button" type="button">
-                      <svg className="place-card__bookmark-icon" width="18" height="19">
-                        <use xlinkHref="#icon-bookmark" />
-                      </svg>
+                      <BookmarkIcon width={18} height={19} className="place-card__bookmark-icon" />
                       <span className="visually-hidden">To bookmarks</span>
                     </button>
                   </div>
@@ -242,9 +235,7 @@ function OfferNotLogged(): JSX.Element {
                       <span className="place-card__price-text">&#47;&nbsp;night</span>
                     </div>
                     <button className="place-card__bookmark-button button" type="button">
-                      <svg className="place-card__bookmark-icon" width="18" height="19">
-                        <use xlinkHref="#icon-bookmark" />
-                      </svg>
+                      <BookmarkIcon width={18} height={19} className="place-card__bookmark-icon" />
                       <span className="visually-hidden">To bookmarks</span>
                     </button>
                   </div>
