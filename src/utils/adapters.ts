@@ -17,7 +17,7 @@ function adaptType(type: string): PlaceCardType {
 
 function adaptRating(rating: number): Rating {
   const normalized = Math.min(Math.max(Math.round(rating), 0), 5);
-  return (normalized * 20) as Rating;
+  return [0, 20, 40, 60, 80, 100][normalized] as Rating;
 }
 
 export function adaptOfferToClient(offer: OfferPreviewResponse): PlaceCard {
