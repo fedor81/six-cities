@@ -27,56 +27,61 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<ReturnType<typeof layerGroup> | null>(null);
   const markersRef = useRef<Record<string, Marker>>({});
-  const isRenderedRef = useRef<boolean>(false);
   const prevOfferIdsRef = useRef<string[]>([]);
+  const initialViewRef = useRef(city.location);
 
-  // Initialize the Leaflet map once; update center on city change
+  // Create the Leaflet map once for the component lifetime
   useEffect(() => {
     const container = mapContainerRef.current;
 
-    if (!isRenderedRef.current && container) {
-      const instance = new LeafletMap(container, {
-        center: {
-          lat: city.location.latitude,
-          lng: city.location.longitude,
-        },
-        zoom: city.location.zoom,
-      });
+    if (!container) {
+      return;
+    }
 
-      const tileLayer = new TileLayer(
+    const instance = new LeafletMap(container, {
+      center: {
+        lat: initialViewRef.current.latitude,
+        lng: initialViewRef.current.longitude,
+      },
+      zoom: initialViewRef.current.zoom,
+    });
+
+    instance.addLayer(
+      new TileLayer(
         'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         }
-      );
+      )
+    );
 
-      instance.addLayer(tileLayer);
-      mapRef.current = instance;
-      isRenderedRef.current = true;
-    } else if (mapRef.current) {
-      mapRef.current.setView(
-        [city.location.latitude, city.location.longitude],
-        city.location.zoom
-      );
-    }
+    mapRef.current = instance;
+    markerLayerRef.current = layerGroup().addTo(instance);
 
     return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
+      instance.remove();
+      mapRef.current = null;
+      markerLayerRef.current = null;
+      markersRef.current = {};
+      prevOfferIdsRef.current = [];
     };
+  }, []);
+
+  // Follow the selected city
+  useEffect(() => {
+    mapRef.current?.setView(
+      [city.location.latitude, city.location.longitude],
+      city.location.zoom
+    );
   }, [city.location.latitude, city.location.longitude, city.location.zoom]);
 
   // Manage markers — fires on every render but only acts when offer IDs actually change
   useEffect(() => {
-    if (!mapRef.current) {
-      return;
-    }
+    const markerLayer = markerLayerRef.current;
 
-    if (!markerLayerRef.current) {
-      markerLayerRef.current = layerGroup().addTo(mapRef.current);
+    if (!markerLayer) {
+      return;
     }
 
     const currentIds = offers.map((o) => o.id).sort();
@@ -95,7 +100,7 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     // Remove markers no longer in offers
     prevIds.forEach((id) => {
       if (!currentIdSet.has(id)) {
-        markerLayerRef.current!.removeLayer(markersRef.current[id]);
+        markerLayer.removeLayer(markersRef.current[id]);
         delete markersRef.current[id];
       }
     });
@@ -103,11 +108,14 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     // Add new markers
     offers.forEach((offer) => {
       if (!markersRef.current[offer.id]) {
-        const marker = new Marker({
-          lat: offer.location.latitude,
-          lng: offer.location.longitude,
-        });
-        marker.addTo(markerLayerRef.current!);
+        const marker = new Marker(
+          {
+            lat: offer.location.latitude,
+            lng: offer.location.longitude,
+          },
+          { icon: offer.id === selectedOfferId ? currentCustomIcon : defaultCustomIcon }
+        );
+        marker.addTo(markerLayer);
         markersRef.current[offer.id] = marker;
       }
     });
@@ -123,15 +131,6 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
       );
     });
   }, [selectedOfferId]);
-
-  // Cleanup on unmount
-  useEffect(() => () => {
-    if (mapRef.current && markerLayerRef.current) {
-      mapRef.current.removeLayer(markerLayerRef.current);
-    }
-    markersRef.current = {};
-    markerLayerRef.current = null;
-  }, []);
 
   return <div style={{ height: '100%' }} ref={mapContainerRef} />;
 }
