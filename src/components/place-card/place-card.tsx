@@ -5,8 +5,7 @@ import OfferCardBody from '../offer-card/offer-card-body';
 
 type PlaceCardProps = PlaceCard & {
   isActive: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onHover: (offerId: string | null) => void;
 };
 
 function PlaceCardInner({
@@ -19,14 +18,13 @@ function PlaceCardInner({
   isPremium,
   isBookmarked,
   isActive,
-  onMouseEnter,
-  onMouseLeave,
+  onHover,
 }: PlaceCardProps): JSX.Element {
   return (
     <article
       className={`cities__card place-card ${isActive ? 'place-card--active' : ''}`}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={() => onHover(id)}
+      onMouseLeave={() => onHover(null)}
     >
       <OfferCardBody
         isPremium={isPremium}

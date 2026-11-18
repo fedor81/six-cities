@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Icon, Marker, layerGroup, Map as LeafletMap, TileLayer } from 'leaflet';
 import { PlaceCard, City } from '../../types/place-card';
 import 'leaflet/dist/leaflet.css';
@@ -22,13 +22,16 @@ const currentCustomIcon = new Icon({
   iconAnchor: [20, 40],
 });
 
-function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
+function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<ReturnType<typeof layerGroup> | null>(null);
   const markersRef = useRef<Record<string, Marker>>({});
   const prevOfferIdsRef = useRef<string[]>([]);
+  const prevSelectedIdRef = useRef<string | null>(null);
   const initialViewRef = useRef(city.location);
+
+  const offerIds = useMemo(() => offers.map((o) => o.id).sort(), [offers]);
 
   // Create the Leaflet map once for the component lifetime
   useEffect(() => {
@@ -76,7 +79,7 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     );
   }, [city.location.latitude, city.location.longitude, city.location.zoom]);
 
-  // Manage markers — fires on every render but only acts when offer IDs actually change
+  // Add or remove markers only when the set of offer IDs changes
   useEffect(() => {
     const markerLayer = markerLayerRef.current;
 
@@ -84,7 +87,7 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
       return;
     }
 
-    const currentIds = offers.map((o) => o.id).sort();
+    const currentIds = offerIds;
     const prevIds = prevOfferIdsRef.current;
 
     const hasChanged =
@@ -121,18 +124,26 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     });
 
     prevOfferIdsRef.current = currentIds;
-  });
+  }, [offers, offerIds, selectedOfferId]);
 
-  // Update marker icons when selection changes
+  // Update only the markers whose selection state actually changed
   useEffect(() => {
-    Object.entries(markersRef.current).forEach(([offerId, marker]) => {
-      marker.setIcon(
-        offerId === selectedOfferId ? currentCustomIcon : defaultCustomIcon
-      );
-    });
+    const prevId = prevSelectedIdRef.current;
+
+    if (prevId !== null && markersRef.current[prevId]) {
+      markersRef.current[prevId].setIcon(defaultCustomIcon);
+    }
+
+    if (selectedOfferId !== null && markersRef.current[selectedOfferId]) {
+      markersRef.current[selectedOfferId].setIcon(currentCustomIcon);
+    }
+
+    prevSelectedIdRef.current = selectedOfferId;
   }, [selectedOfferId]);
 
   return <div style={{ height: '100%' }} ref={mapContainerRef} />;
 }
+
+const Map = React.memo(MapInner);
 
 export default Map;

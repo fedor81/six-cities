@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CitiesList from '../../components/cities-list/cities-list';
@@ -37,9 +37,7 @@ function Main(): JSX.Element {
     dispatch(changeCity(nextCity));
   };
 
-  const handleOfferHover = (offerId: string | null) => {
-    setActiveOfferId(offerId);
-  };
+  const handleOfferHover = useCallback((offerId: string | null) => setActiveOfferId(offerId), []);
 
   const handleSortingChange = (nextSorting: SortingType) => {
     setSorting(nextSorting);
@@ -75,7 +73,7 @@ function Main(): JSX.Element {
                   <PlacesList
                     offers={cityOffers}
                     activeOfferId={activeOfferId}
-                    onOfferTypeChange={handleOfferHover}
+                    onHover={handleOfferHover}
                   />
                 )}
               </section>

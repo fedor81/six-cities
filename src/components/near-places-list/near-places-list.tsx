@@ -1,6 +1,8 @@
 import type { PlaceCard } from '../../types/place-card';
 import PlaceCardComponent from '../place-card/place-card';
 
+const noop: (offerId: string | null) => void = () => {};
+
 type NearPlacesListProps = {
   offers: PlaceCard[];
 };
@@ -13,8 +15,7 @@ function NearPlacesList({ offers }: NearPlacesListProps): JSX.Element {
           key={offer.id}
           {...offer}
           isActive={false}
-          onMouseEnter={() => {}}
-          onMouseLeave={() => {}}
+          onHover={noop}
         />
       ))}
     </div>
