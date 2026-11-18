@@ -29,7 +29,9 @@ function OfferCardBody({
       </div>
       <div className="place-card__info">
         <PriceBlock cost={cost} bookmarkActive={bookmarkActive} />
-        <RatingBar rating={rating} />
+        <div className="place-card__rating rating">
+          <RatingBar rating={rating} />
+        </div>
         <PlaceInfo title={title} type={type} />
       </div>
     </>

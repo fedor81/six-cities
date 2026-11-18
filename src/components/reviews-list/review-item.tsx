@@ -1,10 +1,12 @@
 import { formatDate } from '../../utils/date';
 import type { Review } from '../../types/offer';
 
+import RatingBar from '../offer-card/rating-bar';
+
 type ReviewItemProps = Review;
 
 function ReviewItem({ user, comment, rating, date }: ReviewItemProps): JSX.Element {
-  const starsWidth = `${(rating / 5) * 100}%`;
+  const starsWidth = (rating / 5) * 100;
 
   return (
     <li className="reviews__item">
@@ -22,10 +24,7 @@ function ReviewItem({ user, comment, rating, date }: ReviewItemProps): JSX.Eleme
       </div>
       <div className="reviews__info">
         <div className="reviews__rating rating">
-          <div className="reviews__stars rating__stars">
-            <span style={{ width: starsWidth }}></span>
-            <span className="visually-hidden">Rating</span>
-          </div>
+          <RatingBar rating={starsWidth} className="reviews__stars rating__stars" />
         </div>
         <p className="reviews__text">{comment}</p>
         <time className="reviews__time" dateTime={date}>

@@ -9,8 +9,9 @@ import Map from '../../components/map/map';
 import NearPlacesList from '../../components/near-places-list/near-places-list';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewList from '../../components/reviews-list/review-list';
+import RatingBar from '../../components/offer-card/rating-bar';
 import Spinner from '../../components/spinner/spinner';
-import { getRatingPercentage, getNumericRating } from '../../utils/rating';
+import { getNumericRating } from '../../utils/rating';
 
 function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -55,7 +56,6 @@ function Offer(): JSX.Element {
     .filter((nearOffer) => nearOffer.id !== offer.id && nearOffer.city.name === offer.city.name)
     .slice(0, 3);
 
-  const offerRatingPercentage = getRatingPercentage(offer.rating);
 
   return (
     <div className="page">
@@ -91,10 +91,7 @@ function Offer(): JSX.Element {
                 </button>
               </div>
               <div className="offer__rating rating">
-                <div className="offer__stars rating__stars">
-                  <span style={{ width: offerRatingPercentage }} />
-                  <span className="visually-hidden">Rating</span>
-                </div>
+                <RatingBar rating={offer.rating} />
                 <span className="offer__rating-value rating__value">{getNumericRating(offer.rating)}</span>
               </div>
               <ul className="offer__features">
