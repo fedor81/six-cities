@@ -1,15 +1,21 @@
+import { Link } from 'react-router-dom';
+
 import type { PlaceCardType, Rating } from '../../types/place-card';
+import { AppRoute } from '../../const';
+import RatingBar from './rating-bar';
+import PriceBlock from './price-block';
 
-import { PremiumBadge, RatingBar, PriceBlock, PlaceInfo } from '.';
-
-export type OfferCardBodyProps = {
+type OfferCardBodyProps = {
   isPremium: boolean;
   rating: Rating;
   cost: number;
   title: string;
   type: PlaceCardType;
-  imageLink: JSX.Element;
+  imgSrc: string;
+  offerId: string;
   bookmarkActive: boolean;
+  imgWidth?: number;
+  imgHeight?: number;
 };
 
 function OfferCardBody({
@@ -18,24 +24,40 @@ function OfferCardBody({
   cost,
   title,
   type,
-  imageLink,
+  imgSrc,
+  offerId,
   bookmarkActive,
+  imgWidth = 260,
+  imgHeight = 200,
 }: OfferCardBodyProps): JSX.Element {
   return (
     <>
-      <PremiumBadge isPremium={isPremium} />
+      {isPremium && (
+        <div className="place-card__mark">
+          <span>Premium</span>
+        </div>
+      )}
       <div className="place-card__image-wrapper">
-        {imageLink}
+        <Link to={`${AppRoute.Offer}/${offerId}`}>
+          <img
+            className="place-card__image"
+            src={imgSrc}
+            width={imgWidth}
+            height={imgHeight}
+            alt="Place image"
+          />
+        </Link>
       </div>
       <div className="place-card__info">
         <PriceBlock cost={cost} bookmarkActive={bookmarkActive} />
         <div className="place-card__rating rating">
           <RatingBar rating={rating} />
         </div>
-        <PlaceInfo title={title} type={type} />
+        <h2 className="place-card__name">{title}</h2>
+        <p className="place-card__type">{type}</p>
       </div>
     </>
   );
 }
 
-export default OfferCardBody;
+export type { OfferCardBodyProps };

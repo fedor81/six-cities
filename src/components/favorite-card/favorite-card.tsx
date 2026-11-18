@@ -1,8 +1,5 @@
-import { Link } from 'react-router-dom';
-
 import type { PlaceCard } from '../../types/place-card';
 import OfferCardBody from '../offer-card/offer-card-body';
-import { AppRoute } from '../../const';
 
 function FavoriteCard({
   id,
@@ -21,18 +18,11 @@ function FavoriteCard({
         cost={cost}
         title={title}
         type={type}
-        imageLink={
-          <Link to={`${AppRoute.Offer}/${id}`}>
-            <img
-              className="place-card__image"
-              src={img}
-              width={150}
-              height={110}
-              alt="Place image"
-            />
-          </Link>
-        }
+        imgSrc={img}
+        offerId={id}
         bookmarkActive
+        imgWidth={150}
+        imgHeight={110}
       />
     </article>
   );

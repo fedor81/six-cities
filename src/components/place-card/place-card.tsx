@@ -1,8 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import type { PlaceCard } from '../../types/place-card';
-import { AppRoute } from '../../const';
 import OfferCardBody from '../offer-card/offer-card-body';
 
 type PlaceCardProps = PlaceCard & {
@@ -36,17 +34,8 @@ function PlaceCardInner({
         cost={cost}
         title={title}
         type={type}
-        imageLink={
-          <Link to={`${AppRoute.Offer}/${id}`}>
-            <img
-              className="place-card__image"
-              src={img}
-              width={260}
-              height={200}
-              alt="Place image"
-            />
-          </Link>
-        }
+        imgSrc={img}
+        offerId={id}
         bookmarkActive={isBookmarked}
       />
     </article>
