@@ -1,18 +1,10 @@
 import FavoriteCard from '../favorite-card/favorite-card';
 import type { PlaceCard } from '../../types/place-card';
+import { getOffersByCityName, getUniqueCities } from '../../store/selectors';
 
 type FavoritesPlacesListProps = {
   offers: PlaceCard[];
 };
-
-function getCityOffers(offers: PlaceCard[], cityName: string): PlaceCard[] {
-  return offers.filter((offer) => offer.city.name === cityName);
-}
-
-function getUniqueCities(offers: PlaceCard[]): string[] {
-  const cities = offers.map((offer) => offer.city.name);
-  return [...new Set(cities)];
-}
 
 function FavoritesPlacesList({ offers }: FavoritesPlacesListProps): JSX.Element {
   const cities = getUniqueCities(offers);
@@ -20,7 +12,7 @@ function FavoritesPlacesList({ offers }: FavoritesPlacesListProps): JSX.Element 
   return (
     <ul className="favorites__list">
       {cities.map((cityName) => {
-        const cityOffers = getCityOffers(offers, cityName);
+        const cityOffers = getOffersByCityName(offers, cityName);
 
         return (
           <li className="favorites__locations-items" key={cityName}>

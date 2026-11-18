@@ -5,21 +5,21 @@ import { Link, NavLink } from 'react-router-dom';
 import { AppRoute, AuthorizationStatus } from '../../const';
 import type { AppDispatch, RootState } from '../../store';
 import { logout } from '../../store/api-actions';
+import { getFavoriteCount } from '../../store/selectors';
 
 type HeaderProps = {
-  favoriteCount?: number;
   isLogoActive?: boolean;
   showNavigation?: boolean;
 }
 
 function Header({
-  favoriteCount = 0,
   isLogoActive = false,
   showNavigation = true,
 }: HeaderProps): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
   const user = useSelector((state: RootState) => state.user);
+  const favoriteCount = useSelector(getFavoriteCount);
 
   const isLoggedIn = authorizationStatus === AuthorizationStatus.Auth;
 

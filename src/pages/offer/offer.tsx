@@ -13,6 +13,7 @@ import RatingBar from '../../components/offer-card/rating-bar';
 import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
 import Spinner from '../../components/spinner/spinner';
 import { AuthorizationStatus } from '../../const';
+import { getNearbyOffers } from '../../store/selectors';
 import { getNumericRating } from '../../utils/rating';
 
 function Offer(): JSX.Element {
@@ -29,14 +30,12 @@ function Offer(): JSX.Element {
     }
   }, [id, dispatch]);
 
-  const favoriteCount = offers.filter((offer) => offer.isBookmarked).length;
-
   const offer = id ? offerDetails[id] : undefined;
 
   if (!offer) {
     return (
       <div className="page page--gray">
-        <Header favoriteCount={favoriteCount} />
+        <Header />
         <main className="page__main">
           <div className="container">
             <section className="offer not-found">
@@ -55,14 +54,12 @@ function Offer(): JSX.Element {
     );
   }
 
-  const nearPlaces = offers
-    .filter((nearOffer) => nearOffer.id !== offer.id && nearOffer.city.name === offer.city.name)
-    .slice(0, 3);
+  const nearPlaces = getNearbyOffers(offers, offer);
 
 
   return (
     <div className="page">
-      <Header favoriteCount={favoriteCount} />
+      <Header />
 
       <main className="page__main page__main--offer">
         <section className="offer">

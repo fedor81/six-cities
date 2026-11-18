@@ -60,4 +60,5 @@ function OfferCardBody({
   );
 }
 
+export default OfferCardBody;
 export type { OfferCardBodyProps };

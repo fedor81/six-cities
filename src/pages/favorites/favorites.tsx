@@ -1,6 +1,7 @@
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import FavoritesPlacesList from '../../components/favorites-places-list/favorites-places-list';
+import { getBookmarkedOffersFromList } from '../../store/selectors';
 import type { PlaceCard } from '../../types/place-card';
 
 type FavoritesProps = {
@@ -8,11 +9,11 @@ type FavoritesProps = {
 };
 
 function Favorites({ offers }: FavoritesProps): JSX.Element {
-  const bookmarkedOffers = offers.filter((offer) => offer.isBookmarked);
+  const bookmarkedOffers = getBookmarkedOffersFromList(offers);
 
   return (
     <div className="page">
-      <Header favoriteCount={bookmarkedOffers.length} />
+      <Header />
 
       <main className="page__main page__main--favorites">
         <div className="page__favorites-container container">
