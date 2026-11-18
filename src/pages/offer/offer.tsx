@@ -12,6 +12,7 @@ import ReviewList from '../../components/reviews-list/review-list';
 import RatingBar from '../../components/offer-card/rating-bar';
 import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
 import Spinner from '../../components/spinner/spinner';
+import { AuthorizationStatus } from '../../const';
 import { getNumericRating } from '../../utils/rating';
 
 function Offer(): JSX.Element {
@@ -20,6 +21,7 @@ function Offer(): JSX.Element {
   const offers = useSelector((state: RootState) => state.offers);
   const offerDetails = useSelector((state: RootState) => state.offerDetails);
   const offerDetailsError = useSelector((state: RootState) => state.offerDetailsError);
+  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
 
   useEffect(() => {
     if (id) {
@@ -137,7 +139,7 @@ function Offer(): JSX.Element {
                 </div>
               </div>
               <ReviewList reviews={offer.reviews} />
-              <ReviewForm />
+              {authorizationStatus === AuthorizationStatus.Auth && <ReviewForm />}
             </div>
           </div>
           <section className="offer__map map">
