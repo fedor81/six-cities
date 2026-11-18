@@ -2,11 +2,11 @@ import { createSelector } from '@reduxjs/toolkit';
 
 import type { City, PlaceCard } from '../types/place-card';
 import type { OfferDetail } from '../types/offer';
-import type { InitialState } from './reducer';
+import type { RootState } from './index';
 
 // State selectors
-export const getCity = (state: InitialState): City => state.city;
-export const getOffers = (state: InitialState): PlaceCard[] => state.offers;
+export const getCity = (state: RootState): City => state.data.city;
+export const getOffers = (state: RootState): PlaceCard[] => state.data.offers;
 
 export const getBookmarkedOffers = createSelector([getOffers], (offers) =>
   offers.filter((offer) => offer.isBookmarked)
@@ -21,7 +21,7 @@ export const getOffersByCity = createSelector([getOffers, getCity], (offers, cit
 );
 
 export const getHeaderState = createSelector(
-  [(state: InitialState) => state.authorizationStatus, (state: InitialState) => state.user, getFavoriteCount],
+  [(state: RootState) => state.user.authorizationStatus, (state: RootState) => state.user.user, getFavoriteCount],
   (authorizationStatus, user, favoriteCount) => ({ authorizationStatus, user, favoriteCount })
 );
 

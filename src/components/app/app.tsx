@@ -16,7 +16,7 @@ const Offer = lazy(() => import('../../pages/offer/offer'));
 
 function App(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
-  const offers = useSelector((state: RootState) => state.offers);
+  const offers = useSelector((state: RootState) => state.data.offers);
 
   useEffect(() => {
     dispatch(checkAuth()).catch(() => {

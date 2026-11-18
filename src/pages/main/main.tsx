@@ -9,7 +9,7 @@ import ServerError from '../../components/server-error/server-error';
 import SortingOptions from '../../components/sorting-options/sorting-options';
 import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
-import { changeCity } from '../../store/action';
+import { changeCity } from '../../store/data-slice';
 import type { AppDispatch, RootState } from '../../store';
 import { getOffersByCityName } from '../../store/selectors';
 import type { City } from '../../types/place-card';
@@ -20,10 +20,10 @@ function Main(): JSX.Element {
   const [sorting, setSorting] = useState<SortingType>(SortingType.Popular);
   const dispatch = useDispatch<AppDispatch>();
 
-  const city = useSelector((state: RootState) => state.city);
-  const offers = useSelector((state: RootState) => state.offers);
-  const offersStatus = useSelector((state: RootState) => state.offersStatus);
-  const offersError = useSelector((state: RootState) => state.offersError);
+  const city = useSelector((state: RootState) => state.data.city);
+  const offers = useSelector((state: RootState) => state.data.offers);
+  const offersStatus = useSelector((state: RootState) => state.data.offersStatus);
+  const offersError = useSelector((state: RootState) => state.data.offersError);
 
   const isError = offersStatus === DataLoadingStatus.Error;
   const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;

@@ -19,10 +19,10 @@ import { getNumericRating } from '../../utils/rating';
 function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  const offers = useSelector((state: RootState) => state.offers);
-  const offerDetails = useSelector((state: RootState) => state.offerDetails);
-  const offerDetailsError = useSelector((state: RootState) => state.offerDetailsError);
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+  const offers = useSelector((state: RootState) => state.data.offers);
+  const offerDetails = useSelector((state: RootState) => state.data.offerDetails);
+  const offerDetailsError = useSelector((state: RootState) => state.data.offerDetailsError);
+  const authorizationStatus = useSelector((state: RootState) => state.user.authorizationStatus);
 
   useEffect(() => {
     if (id && !offerDetails[id]) {

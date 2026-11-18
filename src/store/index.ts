@@ -4,13 +4,16 @@ import { StatusCodes } from 'http-status-codes';
 
 import { createAPI } from '../api';
 import { AuthorizationStatus } from '../const';
-import { setAuthorizationStatus } from './action';
-import { reducer } from './reducer';
+import { dataReducer } from './data-slice';
+import { userReducer, setAuthorizationStatus } from './user-slice';
 
 export const api = createAPI();
 
 export const store = configureStore({
-  reducer,
+  reducer: {
+    data: dataReducer,
+    user: userReducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: {

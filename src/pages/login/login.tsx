@@ -10,7 +10,7 @@ import type { LoginData } from '../../types/server';
 
 function Login(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+  const authorizationStatus = useSelector((state: RootState) => state.user.authorizationStatus);
   const [formData, setFormData] = useState<LoginData>({ email: '', password: '' });
 
   const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
