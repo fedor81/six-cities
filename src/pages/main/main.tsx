@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CitiesList from '../../components/cities-list/cities-list';
@@ -10,26 +9,24 @@ import SortingOptions from '../../components/sorting-options/sorting-options';
 import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
 import { changeCity } from '../../store/action';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+import { getSortedCityOffers } from '../../store/selectors';
 import type { City } from '../../types/place-card';
-import { sortOffers } from '../../utils/sorting';
 
 function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingType>(SortingType.Popular);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const city = useSelector((state: RootState) => state.city);
-  const offers = useSelector((state: RootState) => state.offers);
   const offersStatus = useSelector((state: RootState) => state.offersStatus);
   const offersError = useSelector((state: RootState) => state.offersError);
 
   const isError = offersStatus === DataLoadingStatus.Error;
   const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;
 
-  const cityOffers = sortOffers(
-    offers.filter((offer) => offer.city.name === city.name),
-    sorting
+  const cityOffers = useSelector((state: RootState) =>
+    getSortedCityOffers(state, sorting)
   );
 
   const handleCityChange = (nextCity: City) => {
@@ -44,11 +41,9 @@ function Main(): JSX.Element {
     setSorting(nextSorting);
   };
 
-  const favoriteCount = offers.filter((offer) => offer.isBookmarked).length;
-
   return (
     <div className="page page--gray page--main">
-      <Header isLogoActive favoriteCount={favoriteCount} />
+      <Header isLogoActive />
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>

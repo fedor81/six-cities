@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import type { PlaceCard } from '../../types/place-card';
@@ -10,7 +11,7 @@ type PlaceCardProps = PlaceCard & {
   onMouseLeave: () => void;
 };
 
-function PlaceCard({
+function PlaceCardInner({
   id,
   img,
   cost,
@@ -51,5 +52,7 @@ function PlaceCard({
     </article>
   );
 }
+
+const PlaceCard = React.memo(PlaceCardInner);
 
 export default PlaceCard;

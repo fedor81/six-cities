@@ -1,3 +1,5 @@
+import React from 'react';
+
 import type { PlaceCard } from '../../types/place-card';
 import PlaceCardComponent from '../place-card/place-card';
 
@@ -7,7 +9,7 @@ type PlacesListProps = {
   onOfferTypeChange: (offerId: string | null) => void;
 };
 
-function PlacesList({ offers, activeOfferId, onOfferTypeChange }: PlacesListProps): JSX.Element {
+function PlacesListInner({ offers, activeOfferId, onOfferTypeChange }: PlacesListProps): JSX.Element {
   return (
     <div className="cities__places-list places__list tabs__content">
       {offers.map((offer) => (
@@ -22,5 +24,7 @@ function PlacesList({ offers, activeOfferId, onOfferTypeChange }: PlacesListProp
     </div>
   );
 }
+
+const PlacesList = React.memo(PlacesListInner);
 
 export default PlacesList;
