@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -25,12 +25,14 @@ function Offer(): JSX.Element {
   const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
 
   useEffect(() => {
-    if (id) {
+    if (id && !offerDetails[id]) {
       dispatch(fetchOfferDetailsAction(id));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, offerDetails]);
 
   const offer = id ? offerDetails[id] : undefined;
+
+  const nearPlaces = useMemo(() => (offer ? getNearbyOffers(offers, offer) : []), [offers, offer]);
 
   if (!offer) {
     return (
@@ -53,9 +55,6 @@ function Offer(): JSX.Element {
       </div>
     );
   }
-
-  const nearPlaces = getNearbyOffers(offers, offer);
-
 
   return (
     <div className="page">
