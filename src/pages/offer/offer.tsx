@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import type { OfferDetail } from '../../types/offer';
+import type { RootState } from '../../store';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import NearPlacesList from '../../components/near-places-list/near-places-list';
@@ -14,6 +16,9 @@ type OfferProps = {
 
 function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
   const { id } = useParams<{ id: string }>();
+  const offers = useSelector((state: RootState) => state.offers);
+
+  const favoriteCount = offers.filter((offer) => offer.isBookmarked).length;
 
   const offer = id ? offerDetails[id] : null;
 
@@ -39,7 +44,7 @@ function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
 
   return (
     <div className="page">
-      <Header favoriteCount={3} />
+      <Header favoriteCount={favoriteCount} />
 
       <main className="page__main page__main--offer">
         <section className="offer">

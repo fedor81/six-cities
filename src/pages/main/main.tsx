@@ -44,9 +44,11 @@ function Main(): JSX.Element {
     setSorting(nextSorting);
   };
 
+  const favoriteCount = offers.filter((offer) => offer.isBookmarked).length;
+
   return (
     <div className="page page--gray page--main">
-      <Header isLogoActive favoriteCount={3} />
+      <Header isLogoActive favoriteCount={favoriteCount} />
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
