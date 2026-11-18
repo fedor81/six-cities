@@ -1,9 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { AuthorizationStatus, CITIES, DataLoadingStatus } from '../const';
 import { City, PlaceCard } from '../types/place-card';
+import type { OfferDetail } from '../types/offer';
 import type { AuthInfoResponse } from '../types/server';
 import { changeCity, fillOffers, setAuthorizationStatus, setUser } from './action';
-import { fetchOffersAction } from './api-actions';
+import { fetchOffersAction, fetchOfferDetailsAction } from './api-actions';
 
 export type InitialState = {
   city: City;
@@ -12,6 +13,9 @@ export type InitialState = {
   offersError: string | null;
   authorizationStatus: AuthorizationStatus;
   user: AuthInfoResponse | null;
+  offerDetails: Record<string, OfferDetail>;
+  offerDetailsStatus: DataLoadingStatus;
+  offerDetailsError: string | null;
 };
 
 const initialState: InitialState = {
@@ -21,6 +25,9 @@ const initialState: InitialState = {
   offersError: null,
   authorizationStatus: AuthorizationStatus.Unknown,
   user: null,
+  offerDetails: {},
+  offerDetailsStatus: DataLoadingStatus.Idle,
+  offerDetailsError: null,
 };
 
 const reducer = createReducer(initialState, (builder) => {
@@ -48,6 +55,18 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(fetchOffersAction.rejected, (state, action) => {
       state.offersStatus = DataLoadingStatus.Error;
       state.offersError = action.payload ?? 'Не удалось загрузить предложения.';
+    })
+    .addCase(fetchOfferDetailsAction.pending, (state) => {
+      state.offerDetailsStatus = DataLoadingStatus.Loading;
+      state.offerDetailsError = null;
+    })
+    .addCase(fetchOfferDetailsAction.fulfilled, (state, action) => {
+      state.offerDetails[action.payload.id] = action.payload;
+      state.offerDetailsStatus = DataLoadingStatus.Success;
+    })
+    .addCase(fetchOfferDetailsAction.rejected, (state, action) => {
+      state.offerDetailsStatus = DataLoadingStatus.Error;
+      state.offerDetailsError = action.payload ?? 'Не удалось загрузить детали предложения.';
     });
 });
 

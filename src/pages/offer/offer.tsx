@@ -1,34 +1,49 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { OfferDetail } from '../../types/offer';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+import { fetchOfferDetailsAction } from '../../store/api-actions';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import NearPlacesList from '../../components/near-places-list/near-places-list';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewList from '../../components/reviews-list/review-list';
+import Spinner from '../../components/spinner/spinner';
 import { getRatingPercentage, getNumericRating } from '../../utils/rating';
 
-type OfferProps = {
-  offerDetails?: Record<string, OfferDetail>;
-};
-
-function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
+function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch<AppDispatch>();
   const offers = useSelector((state: RootState) => state.offers);
+  const offerDetails = useSelector((state: RootState) => state.offerDetails);
+  const offerDetailsError = useSelector((state: RootState) => state.offerDetailsError);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchOfferDetailsAction(id));
+    }
+  }, [id, dispatch]);
 
   const favoriteCount = offers.filter((offer) => offer.isBookmarked).length;
 
-  const offer = id ? offerDetails[id] : null;
+  const offer = id ? offerDetails[id] : undefined;
 
   if (!offer) {
     return (
       <div className="page page--gray">
+        <Header favoriteCount={favoriteCount} />
         <main className="page__main">
           <div className="container">
             <section className="offer not-found">
-              <h1 className="offer__name">Offer not found</h1>
+              {offerDetailsError ? (
+                <>
+                  <h1 className="offer__name">Предложение не найдено</h1>
+                  <p className="offer__text">{offerDetailsError}</p>
+                </>
+              ) : (
+                <Spinner label="Загрузка предложения…" />
+              )}
             </section>
           </div>
         </main>
@@ -36,8 +51,8 @@ function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
     );
   }
 
-  const nearPlaces = Object.values(offerDetails)
-    .filter((o) => o.id !== offer.id)
+  const nearPlaces = offers
+    .filter((nearOffer) => nearOffer.id !== offer.id && nearOffer.city.name === offer.city.name)
     .slice(0, 3);
 
   const offerRatingPercentage = getRatingPercentage(offer.rating);

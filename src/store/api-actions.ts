@@ -4,8 +4,9 @@ import type { AxiosInstance } from 'axios';
 import { dropToken, saveToken } from '../api';
 import { AuthorizationStatus } from '../const';
 import type { PlaceCard } from '../types/place-card';
-import type { AuthInfoResponse, LoginData, OfferPreviewResponse } from '../types/server';
-import { adaptOfferToClient } from '../utils/adapters';
+import type { OfferDetail } from '../types/offer';
+import type { AuthInfoResponse, LoginData, OfferDetailResponse, OfferPreviewResponse, ReviewResponse } from '../types/server';
+import { adaptOfferToClient, adaptOfferDetailToClient } from '../utils/adapters';
 import { setAuthorizationStatus, setUser } from './action';
 import type { AppDispatch } from './index';
 
@@ -60,6 +61,22 @@ export const fetchOffersAction = createAsyncThunk<PlaceCard[], undefined, ThunkC
       return data.map(adaptOfferToClient);
     } catch {
       return rejectWithValue('Не удалось загрузить предложения. Проверьте подключение и попробуйте ещё раз.');
+    }
+  }
+);
+
+export const fetchOfferDetailsAction = createAsyncThunk<OfferDetail, string, ThunkConfig>(
+  'data/fetchOfferDetails',
+  async (offerId, { extra: api, rejectWithValue }) => {
+    try {
+      const [{ data: offer }, { data: reviews }] = await Promise.all([
+        api.get<OfferDetailResponse>(`/offers/${offerId}`),
+        api.get<ReviewResponse[]>(`/comments/${offerId}`),
+      ]);
+
+      return adaptOfferDetailToClient(offer, reviews);
+    } catch {
+      return rejectWithValue('Не удалось загрузить детали предложения.');
     }
   }
 );
