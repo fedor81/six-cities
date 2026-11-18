@@ -45,6 +45,8 @@ function OfferCardBody({
             width={imgWidth}
             height={imgHeight}
             alt="Place image"
+            loading="lazy"
+            decoding="async"
           />
         </Link>
       </div>
