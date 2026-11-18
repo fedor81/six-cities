@@ -17,7 +17,9 @@ function App(): JSX.Element {
   const offers = useSelector((state: RootState) => state.offers);
 
   useEffect(() => {
-    dispatch(checkAuth());
+    dispatch(checkAuth()).catch(() => {
+      // network error — reducer уже установил статус Unknown
+    });
     dispatch(fetchOffersAction());
   }, [dispatch]);
 

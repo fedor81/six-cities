@@ -1,10 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { AuthorizationStatus, CITIES, DataLoadingStatus } from '../const';
+import { dropToken, saveToken } from '../api';
 import { City, PlaceCard } from '../types/place-card';
 import type { OfferDetail } from '../types/offer';
 import type { AuthInfoResponse } from '../types/server';
 import { changeCity, fillOffers, setAuthorizationStatus, setUser } from './action';
-import { fetchOffersAction, fetchOfferDetailsAction } from './api-actions';
+import { fetchOffersAction, fetchOfferDetailsAction, checkAuth, login, logout } from './api-actions';
 
 export type InitialState = {
   city: City;
@@ -67,6 +68,26 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(fetchOfferDetailsAction.rejected, (state, action) => {
       state.offerDetailsStatus = DataLoadingStatus.Error;
       state.offerDetailsError = action.payload ?? 'Не удалось загрузить детали предложения.';
+    })
+    // Auth side effects — user и status синхронизируются автоматически
+    .addCase(checkAuth.fulfilled, (state, action) => {
+      saveToken(action.payload.token);
+      state.user = action.payload;
+      state.authorizationStatus = AuthorizationStatus.Auth;
+    })
+    .addCase(checkAuth.rejected, (state) => {
+      state.authorizationStatus = AuthorizationStatus.Unknown;
+    })
+    .addCase(login.fulfilled, (state, action) => {
+      saveToken(action.payload.token);
+      state.user = action.payload;
+      state.authorizationStatus = AuthorizationStatus.Auth;
+    })
+    .addCase(login.rejected, (state) => {
+      state.authorizationStatus = AuthorizationStatus.NoAuth;
+    })
+    .addCase(logout.fulfilled, () => {
+      dropToken();
     });
 });
 
