@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Icon, Marker, layerGroup } from 'leaflet';
-import useMap from '../../hooks/use-map';
+import { Icon, Marker, layerGroup, Map as LeafletMap, TileLayer } from 'leaflet';
 import { PlaceCard, City } from '../../types/place-card';
 import 'leaflet/dist/leaflet.css';
 import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from './map-config';
@@ -24,28 +23,78 @@ const currentCustomIcon = new Icon({
 });
 
 function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
-  const mapRef = useRef(null);
-  const map = useMap(mapRef, city.location);
-  const markersRef = useRef<Record<string, Marker>>({});
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<ReturnType<typeof layerGroup> | null>(null);
+  const markersRef = useRef<Record<string, Marker>>({});
+  const isRenderedRef = useRef<boolean>(false);
+  const prevOfferIdsRef = useRef<string[]>([]);
 
+  // Initialize the Leaflet map once; update center on city change
   useEffect(() => {
-    if (map && !markerLayerRef.current) {
-      markerLayerRef.current = layerGroup().addTo(map);
+    const container = mapContainerRef.current;
+
+    if (!isRenderedRef.current && container) {
+      const instance = new LeafletMap(container, {
+        center: {
+          lat: city.location.latitude,
+          lng: city.location.longitude,
+        },
+        zoom: city.location.zoom,
+      });
+
+      const tileLayer = new TileLayer(
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        }
+      );
+
+      instance.addLayer(tileLayer);
+      mapRef.current = instance;
+      isRenderedRef.current = true;
+    } else if (mapRef.current) {
+      mapRef.current.setView(
+        [city.location.latitude, city.location.longitude],
+        city.location.zoom
+      );
     }
-  }, [map]);
 
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [city.location.latitude, city.location.longitude, city.location.zoom]);
+
+  // Manage markers — fires on every render but only acts when offer IDs actually change
   useEffect(() => {
-    if (!markerLayerRef.current) {
+    if (!mapRef.current) {
       return;
     }
 
-    const currentIds = new Set(offers.map((o) => o.id));
-    const existingIds = new Set(Object.keys(markersRef.current));
+    if (!markerLayerRef.current) {
+      markerLayerRef.current = layerGroup().addTo(mapRef.current);
+    }
+
+    const currentIds = offers.map((o) => o.id).sort();
+    const prevIds = prevOfferIdsRef.current;
+
+    const hasChanged =
+      currentIds.length !== prevIds.length ||
+      currentIds.some((id, index) => id !== prevIds[index]);
+
+    if (!hasChanged) {
+      return;
+    }
+
+    const currentIdSet = new Set(currentIds);
 
     // Remove markers no longer in offers
-    existingIds.forEach((id) => {
-      if (!currentIds.has(id)) {
+    prevIds.forEach((id) => {
+      if (!currentIdSet.has(id)) {
         markerLayerRef.current!.removeLayer(markersRef.current[id]);
         delete markersRef.current[id];
       }
@@ -62,9 +111,11 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
         markersRef.current[offer.id] = marker;
       }
     });
-  }, [offers]);
 
-  // Update icons only when selected offer changes
+    prevOfferIdsRef.current = currentIds;
+  });
+
+  // Update marker icons when selection changes
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([offerId, marker]) => {
       marker.setIcon(
@@ -75,14 +126,14 @@ function Map({ city, offers, selectedOfferId }: MapProps): JSX.Element {
 
   // Cleanup on unmount
   useEffect(() => () => {
-    if (map && markerLayerRef.current) {
-      map.removeLayer(markerLayerRef.current);
-      markerLayerRef.current = null;
+    if (mapRef.current && markerLayerRef.current) {
+      mapRef.current.removeLayer(markerLayerRef.current);
     }
     markersRef.current = {};
-  }, [map]);
+    markerLayerRef.current = null;
+  }, []);
 
-  return <div style={{ height: '100%' }} ref={mapRef} />;
+  return <div style={{ height: '100%' }} ref={mapContainerRef} />;
 }
 
 export default Map;
