@@ -76,7 +76,7 @@ const reducer = createReducer(initialState, (builder) => {
       state.authorizationStatus = AuthorizationStatus.Auth;
     })
     .addCase(checkAuth.rejected, (state) => {
-      state.authorizationStatus = AuthorizationStatus.Unknown;
+      state.authorizationStatus = AuthorizationStatus.NoAuth;
     })
     .addCase(login.fulfilled, (state, action) => {
       saveToken(action.payload.token);
@@ -86,8 +86,10 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(login.rejected, (state) => {
       state.authorizationStatus = AuthorizationStatus.NoAuth;
     })
-    .addCase(logout.fulfilled, () => {
+    .addCase(logout.fulfilled, (state) => {
       dropToken();
+      state.user = null;
+      state.authorizationStatus = AuthorizationStatus.NoAuth;
     });
 });
 

@@ -18,7 +18,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     dispatch(checkAuth()).catch(() => {
-      // network error — reducer уже установил статус Unknown
+      // network error — reducer уже установил статус NoAuth
     });
     dispatch(fetchOffersAction());
   }, [dispatch]);

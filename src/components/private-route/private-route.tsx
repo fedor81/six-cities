@@ -11,8 +11,12 @@ type PrivateRouteProps = {
 function PrivateRoute({
   redirectTo = AppRoute.Login,
   children,
-}: PrivateRouteProps): JSX.Element {
+}: PrivateRouteProps): JSX.Element | null {
   const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return null;
+  }
 
   return authorizationStatus === AuthorizationStatus.Auth ? (
     children
