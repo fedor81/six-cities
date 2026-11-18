@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import type { AppDispatch, RootState } from '../../store';
+import type { AppDispatch } from '../../store';
 import { logout } from '../../store/api-actions';
-import { getFavoriteCount } from '../../store/selectors';
+import { getHeaderState } from '../../store/selectors';
 
 type HeaderProps = {
   isLogoActive?: boolean;
@@ -17,9 +17,7 @@ function Header({
   showNavigation = true,
 }: HeaderProps): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
-  const authorizationStatus = useSelector((state: RootState) => state.authorizationStatus);
-  const user = useSelector((state: RootState) => state.user);
-  const favoriteCount = useSelector(getFavoriteCount);
+  const { authorizationStatus, user, favoriteCount } = useSelector(getHeaderState);
 
   const isLoggedIn = authorizationStatus === AuthorizationStatus.Auth;
 

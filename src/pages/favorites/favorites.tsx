@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import FavoritesPlacesList from '../../components/favorites-places-list/favorites-places-list';
@@ -9,7 +11,7 @@ type FavoritesProps = {
 };
 
 function Favorites({ offers }: FavoritesProps): JSX.Element {
-  const bookmarkedOffers = getBookmarkedOffersFromList(offers);
+  const bookmarkedOffers = useMemo(() => getBookmarkedOffersFromList(offers), [offers]);
 
   return (
     <div className="page">

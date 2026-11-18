@@ -1,3 +1,5 @@
+import { createSelector } from '@reduxjs/toolkit';
+
 import type { City, PlaceCard } from '../types/place-card';
 import type { OfferDetail } from '../types/offer';
 import type { InitialState } from './reducer';
@@ -5,12 +7,23 @@ import type { InitialState } from './reducer';
 // State selectors
 export const getCity = (state: InitialState): City => state.city;
 export const getOffers = (state: InitialState): PlaceCard[] => state.offers;
-export const getBookmarkedOffers = (state: InitialState): PlaceCard[] =>
-  state.offers.filter((offer) => offer.isBookmarked);
-export const getFavoriteCount = (state: InitialState): number =>
-  state.offers.filter((offer) => offer.isBookmarked).length;
-export const getOffersByCity = (state: InitialState): PlaceCard[] =>
-  state.offers.filter((offer) => offer.city.name === state.city.name);
+
+export const getBookmarkedOffers = createSelector([getOffers], (offers) =>
+  offers.filter((offer) => offer.isBookmarked)
+);
+
+export const getFavoriteCount = createSelector([getOffers], (offers) =>
+  offers.filter((offer) => offer.isBookmarked).length
+);
+
+export const getOffersByCity = createSelector([getOffers, getCity], (offers, city) =>
+  offers.filter((offer) => offer.city.name === city.name)
+);
+
+export const getHeaderState = createSelector(
+  [(state: InitialState) => state.authorizationStatus, (state: InitialState) => state.user, getFavoriteCount],
+  (authorizationStatus, user, favoriteCount) => ({ authorizationStatus, user, favoriteCount })
+);
 
 // Offers-level selectors (operate on a PlaceCard[] array)
 export const getBookmarkedOffersFromList = (offers: PlaceCard[]): PlaceCard[] =>
@@ -24,4 +37,17 @@ export const getNearbyOffers = (offers: PlaceCard[], offer: OfferDetail): PlaceC
 export const getUniqueCities = (offers: PlaceCard[]): string[] => {
   const cities = offers.map((offer) => offer.city.name);
   return [...new Set(cities)];
+};
+export const groupOffersByCity = (offers: PlaceCard[]): Record<string, PlaceCard[]> => {
+  const result: Record<string, PlaceCard[]> = {};
+
+  for (const offer of offers) {
+    const cityName = offer.city.name;
+    if (!result[cityName]) {
+      result[cityName] = [];
+    }
+    result[cityName].push(offer);
+  }
+
+  return result;
 };
