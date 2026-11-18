@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CitiesList from '../../components/cities-list/cities-list';
@@ -11,8 +11,9 @@ import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
 import { changeCity } from '../../store/action';
 import type { AppDispatch, RootState } from '../../store';
-import { getSortedCityOffers } from '../../store/selectors';
+import { getOffersByCityName } from '../../store/selectors';
 import type { City } from '../../types/place-card';
+import { sortOffers } from '../../utils/sorting';
 
 function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -20,14 +21,16 @@ function Main(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
 
   const city = useSelector((state: RootState) => state.city);
+  const offers = useSelector((state: RootState) => state.offers);
   const offersStatus = useSelector((state: RootState) => state.offersStatus);
   const offersError = useSelector((state: RootState) => state.offersError);
 
   const isError = offersStatus === DataLoadingStatus.Error;
   const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;
 
-  const cityOffers = useSelector((state: RootState) =>
-    getSortedCityOffers(state, sorting)
+  const cityOffers = useMemo(
+    () => sortOffers(getOffersByCityName(offers, city.name), sorting),
+    [offers, city.name, sorting]
   );
 
   const handleCityChange = (nextCity: City) => {

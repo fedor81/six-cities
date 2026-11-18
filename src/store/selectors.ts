@@ -1,7 +1,5 @@
 import type { City, PlaceCard } from '../types/place-card';
 import type { OfferDetail } from '../types/offer';
-import { SortingType } from '../const';
-import { sortOffers } from '../utils/sorting';
 import type { InitialState } from './reducer';
 
 // State selectors
@@ -13,8 +11,6 @@ export const getFavoriteCount = (state: InitialState): number =>
   state.offers.filter((offer) => offer.isBookmarked).length;
 export const getOffersByCity = (state: InitialState): PlaceCard[] =>
   state.offers.filter((offer) => offer.city.name === state.city.name);
-export const getSortedCityOffers = (state: InitialState, sorting: SortingType): PlaceCard[] =>
-  sortOffers(getOffersByCity(state), sorting);
 
 // Offers-level selectors (operate on a PlaceCard[] array)
 export const getBookmarkedOffersFromList = (offers: PlaceCard[]): PlaceCard[] =>
