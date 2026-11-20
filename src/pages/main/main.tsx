@@ -69,9 +69,8 @@ function Main(): JSX.Element {
                   currentSorting={sorting}
                   onSortingChange={handleSortingChange}
                 />
-                {isLoading ? (
-                  <Spinner />
-                ) : (
+                {isLoading && <Spinner />}
+                {!isLoading && (
                   <PlacesList
                     offers={cityOffers}
                     activeOfferId={activeOfferId}

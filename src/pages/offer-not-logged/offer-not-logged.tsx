@@ -6,7 +6,7 @@ import Header from '../../components/header/header';
 function OfferNotLogged(): JSX.Element {
   return (
     <div className="page">
-      <Header isLoggedIn={false} />
+      <Header />
 
       <main className="page__main page__main--offer">
         <section className="offer">
