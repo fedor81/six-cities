@@ -1,10 +1,9 @@
-import { MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import type { MouseEvent } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import { AppRoute, AuthorizationStatus } from '../../const';
-import type { AppDispatch } from '../../store';
 import { logout } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getHeaderState } from '../../store/selectors';
 
 type HeaderProps = {
@@ -16,8 +15,8 @@ function Header({
   isLogoActive = false,
   showNavigation = true,
 }: HeaderProps): JSX.Element {
-  const dispatch = useDispatch<AppDispatch>();
-  const { authorizationStatus, user, favoriteCount } = useSelector(getHeaderState);
+  const dispatch = useAppDispatch();
+  const { authorizationStatus, user, favoriteCount } = useAppSelector(getHeaderState);
 
   const isLoggedIn = authorizationStatus === AuthorizationStatus.Auth;
 

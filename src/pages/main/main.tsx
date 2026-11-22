@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import CitiesList from '../../components/cities-list/cities-list';
 import Header from '../../components/header/header';
@@ -10,7 +9,7 @@ import SortingOptions from '../../components/sorting-options/sorting-options';
 import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
 import { changeCity } from '../../store/data-slice';
-import type { AppDispatch, RootState } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getOffersByCityName } from '../../store/selectors';
 import type { City } from '../../types/place-card';
 import { sortOffers } from '../../utils/sorting';
@@ -18,12 +17,12 @@ import { sortOffers } from '../../utils/sorting';
 function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingType>(SortingType.Popular);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const city = useSelector((state: RootState) => state.data.city);
-  const offers = useSelector((state: RootState) => state.data.offers);
-  const offersStatus = useSelector((state: RootState) => state.data.offersStatus);
-  const offersError = useSelector((state: RootState) => state.data.offersError);
+  const city = useAppSelector((state) => state.data.city);
+  const offers = useAppSelector((state) => state.data.offers);
+  const offersStatus = useAppSelector((state) => state.data.offersStatus);
+  const offersError = useAppSelector((state) => state.data.offersError);
 
   const isError = offersStatus === DataLoadingStatus.Error;
   const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;

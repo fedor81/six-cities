@@ -1,16 +1,16 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Header from '../../components/header/header';
 import { AppRoute, AuthorizationStatus } from '../../const';
-import type { AppDispatch, RootState } from '../../store';
 import { login } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import type { LoginData } from '../../types/server';
 
 function Login(): JSX.Element {
-  const dispatch = useDispatch<AppDispatch>();
-  const authorizationStatus = useSelector((state: RootState) => state.user.authorizationStatus);
+  const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector((state) => state.user.authorizationStatus);
   const [formData, setFormData] = useState<LoginData>({ email: '', password: '' });
 
   const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +56,8 @@ function Login(): JSX.Element {
                   name="password"
                   placeholder="Password"
                   required
+                  pattern="^(?=.*[A-Za-z])(?=.*[0-9]).{2,}$"
+                  title="Пароль должен содержать минимум 2 символа, включая хотя бы одну букву и одну цифру"
                   value={formData.password}
                   onChange={handleChange}
                 />

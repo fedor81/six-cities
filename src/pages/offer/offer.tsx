@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from '../../store';
 import { fetchOfferDetailsAction } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import NearPlacesList from '../../components/near-places-list/near-places-list';
@@ -18,11 +17,11 @@ import { getNumericRating } from '../../utils/rating';
 
 function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch<AppDispatch>();
-  const offers = useSelector((state: RootState) => state.data.offers);
-  const offerDetails = useSelector((state: RootState) => state.data.offerDetails);
-  const offerDetailsError = useSelector((state: RootState) => state.data.offerDetailsError);
-  const authorizationStatus = useSelector((state: RootState) => state.user.authorizationStatus);
+  const dispatch = useAppDispatch();
+  const offers = useAppSelector((state) => state.data.offers);
+  const offerDetails = useAppSelector((state) => state.data.offerDetails);
+  const offerDetailsError = useAppSelector((state) => state.data.offerDetailsError);
+  const authorizationStatus = useAppSelector((state) => state.user.authorizationStatus);
 
   useEffect(() => {
     if (id && !offerDetails[id]) {

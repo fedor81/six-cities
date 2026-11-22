@@ -1,10 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 import { AppRoute } from '../../const';
-import type { AppDispatch, RootState } from '../../store';
 import { checkAuth, fetchOffersAction } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Main from '../../pages/main/main';
 import NotFound from '../../pages/not-found/not-found';
 import PrivateRoute from '../private-route/private-route';
@@ -15,8 +14,8 @@ const Favorites = lazy(() => import('../../pages/favorites/favorites'));
 const Offer = lazy(() => import('../../pages/offer/offer'));
 
 function App(): JSX.Element {
-  const dispatch = useDispatch<AppDispatch>();
-  const offers = useSelector((state: RootState) => state.data.offers);
+  const dispatch = useAppDispatch();
+  const offers = useAppSelector((state) => state.data.offers);
 
   useEffect(() => {
     dispatch(checkAuth()).catch(() => {
