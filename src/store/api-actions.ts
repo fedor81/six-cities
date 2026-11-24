@@ -1,53 +1,56 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { AxiosInstance } from 'axios';
+import type { AxiosError } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
-import { dropToken, saveToken } from '../api';
-import { AuthorizationStatus } from '../const';
 import type { PlaceCard } from '../types/place-card';
-import type { AuthInfoResponse, LoginData, OfferPreviewResponse } from '../types/server';
-import { adaptOfferToClient } from '../utils/adapters';
-import { setAuthorizationStatus, setUser } from './action';
-import type { AppDispatch } from './index';
+import type { OfferDetail } from '../types/offer';
+import type { AuthInfoResponse, LoginData, OfferDetailResponse, OfferPreviewResponse, ReviewResponse } from '../types/server';
+import { adaptOfferToClient, adaptOfferDetailToClient } from '../utils/adapters';
 
 type ThunkConfig = {
-  extra: AxiosInstance;
+  extra: import('axios').AxiosInstance;
   rejectValue: string;
-  dispatch: AppDispatch;
 };
 
 export const checkAuth = createAsyncThunk<AuthInfoResponse, undefined, ThunkConfig>(
   'user/checkAuth',
-  async (_arg, { extra: api, dispatch }) => {
-    const { data } = await api.get<AuthInfoResponse>('/login');
-    saveToken(data.token);
-    dispatch(setUser(data));
-    dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
-    return data;
+  async (_arg, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<AuthInfoResponse>('/login');
+      return data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === StatusCodes.UNAUTHORIZED) {
+        return rejectWithValue('Сессия истекла');
+      }
+      throw error;
+    }
   }
 );
 
 export const login = createAsyncThunk<AuthInfoResponse, LoginData, ThunkConfig>(
   'user/login',
-  async (authData, { extra: api, dispatch }) => {
-    const { data } = await api.post<AuthInfoResponse>('/login', authData);
-    saveToken(data.token);
-    dispatch(setUser(data));
-    dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
-    return data;
+  async (authData, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.post<AuthInfoResponse>('/login', authData);
+      return data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === StatusCodes.UNAUTHORIZED) {
+        return rejectWithValue('Неверные учётные данные');
+      }
+      throw error;
+    }
   }
 );
 
 export const logout = createAsyncThunk<void, undefined, ThunkConfig>(
   'user/logout',
-  async (_arg, { extra: api, dispatch }) => {
+  async (_arg, { extra: api }) => {
     try {
       await api.delete('/logout');
     } catch {
       // даже если сервер недоступен, локальную сессию нужно сбросить
-    } finally {
-      dropToken();
-      dispatch(setUser(null));
-      dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
     }
   }
 );
@@ -60,6 +63,22 @@ export const fetchOffersAction = createAsyncThunk<PlaceCard[], undefined, ThunkC
       return data.map(adaptOfferToClient);
     } catch {
       return rejectWithValue('Не удалось загрузить предложения. Проверьте подключение и попробуйте ещё раз.');
+    }
+  }
+);
+
+export const fetchOfferDetailsAction = createAsyncThunk<OfferDetail, string, ThunkConfig>(
+  'data/fetchOfferDetails',
+  async (offerId, { extra: api, rejectWithValue }) => {
+    try {
+      const [{ data: offer }, { data: reviews }] = await Promise.all([
+        api.get<OfferDetailResponse>(`/offers/${offerId}`),
+        api.get<ReviewResponse[]>(`/comments/${offerId}`),
+      ]);
+
+      return adaptOfferDetailToClient(offer, reviews);
+    } catch {
+      return rejectWithValue('Не удалось загрузить детали предложения.');
     }
   }
 );

@@ -1,16 +1,13 @@
-import type { Rating } from '../../types/place-card';
-
 type RatingBarProps = {
-  rating: Rating;
+  rating: number;
+  className?: string;
 };
 
-function RatingBar({ rating }: RatingBarProps): JSX.Element {
+function RatingBar({ rating, className = 'place-card__stars rating__stars' }: RatingBarProps): JSX.Element {
   return (
-    <div className="place-card__rating rating">
-      <div className="place-card__stars rating__stars">
-        <span style={{ width: `${rating}%` }}></span>
-        <span className="visually-hidden">Rating</span>
-      </div>
+    <div className={className}>
+      <span style={{ width: `${rating}%` }}></span>
+      <span className="visually-hidden">Rating</span>
     </div>
   );
 }

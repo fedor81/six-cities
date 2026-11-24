@@ -1,29 +1,53 @@
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import type { OfferDetail } from '../../types/offer';
+import { fetchOfferDetailsAction } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Header from '../../components/header/header';
 import Map from '../../components/map/map';
 import NearPlacesList from '../../components/near-places-list/near-places-list';
 import ReviewForm from '../../components/review-form/review-form';
 import ReviewList from '../../components/reviews-list/review-list';
-import { getRatingPercentage, getNumericRating } from '../../utils/rating';
+import RatingBar from '../../components/offer-card/rating-bar';
+import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
+import Spinner from '../../components/spinner/spinner';
+import { AuthorizationStatus } from '../../const';
+import { getNearbyOffers } from '../../store/selectors';
+import { getNumericRating } from '../../utils/rating';
 
-type OfferProps = {
-  offerDetails?: Record<string, OfferDetail>;
-};
-
-function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
+function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const offers = useAppSelector((state) => state.data.offers);
+  const offerDetails = useAppSelector((state) => state.data.offerDetails);
+  const offerDetailsError = useAppSelector((state) => state.data.offerDetailsError);
+  const authorizationStatus = useAppSelector((state) => state.user.authorizationStatus);
 
-  const offer = id ? offerDetails[id] : null;
+  useEffect(() => {
+    if (id && !offerDetails[id]) {
+      dispatch(fetchOfferDetailsAction(id));
+    }
+  }, [id, dispatch, offerDetails]);
+
+  const offer = id ? offerDetails[id] : undefined;
+
+  const nearPlaces = useMemo(() => (offer ? getNearbyOffers(offers, offer) : []), [offers, offer]);
 
   if (!offer) {
     return (
       <div className="page page--gray">
+        <Header />
         <main className="page__main">
           <div className="container">
             <section className="offer not-found">
-              <h1 className="offer__name">Offer not found</h1>
+              {offerDetailsError ? (
+                <>
+                  <h1 className="offer__name">Предложение не найдено</h1>
+                  <p className="offer__text">{offerDetailsError}</p>
+                </>
+              ) : (
+                <Spinner label="Загрузка предложения…" />
+              )}
             </section>
           </div>
         </main>
@@ -31,15 +55,9 @@ function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
     );
   }
 
-  const nearPlaces = Object.values(offerDetails)
-    .filter((o) => o.id !== offer.id)
-    .slice(0, 3);
-
-  const offerRatingPercentage = getRatingPercentage(offer.rating);
-
   return (
     <div className="page">
-      <Header favoriteCount={3} />
+      <Header />
 
       <main className="page__main page__main--offer">
         <section className="offer">
@@ -63,18 +81,10 @@ function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
                 <h1 className="offer__name">
                   {offer.title}
                 </h1>
-                <button className="offer__bookmark-button button" type="button">
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark" />
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+                <OfferBookmarkButton />
               </div>
               <div className="offer__rating rating">
-                <div className="offer__stars rating__stars">
-                  <span style={{ width: offerRatingPercentage }} />
-                  <span className="visually-hidden">Rating</span>
-                </div>
+                <RatingBar rating={offer.rating} />
                 <span className="offer__rating-value rating__value">{getNumericRating(offer.rating)}</span>
               </div>
               <ul className="offer__features">
@@ -124,7 +134,7 @@ function Offer({ offerDetails = {} }: OfferProps): JSX.Element {
                 </div>
               </div>
               <ReviewList reviews={offer.reviews} />
-              <ReviewForm />
+              {authorizationStatus === AuthorizationStatus.Auth && <ReviewForm />}
             </div>
           </div>
           <section className="offer__map map">

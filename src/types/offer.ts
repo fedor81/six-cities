@@ -1,4 +1,4 @@
-import { PlaceCard, PlaceCardType } from './place-card';
+import { PlaceCard } from './place-card';
 
 export type User = {
   name: string;
@@ -17,8 +17,6 @@ export type Review = {
 export type OfferDetail = PlaceCard & {
   description: string;
   images: string[];
-  isPremium: boolean;
-  type: PlaceCardType;
   goods: string[]; // amenities
   host: User;
   bedrooms: number;

@@ -1,16 +1,14 @@
-import { Link } from 'react-router-dom';
+import React from 'react';
 
 import type { PlaceCard } from '../../types/place-card';
-import { AppRoute } from '../../const';
 import OfferCardBody from '../offer-card/offer-card-body';
 
 type PlaceCardProps = PlaceCard & {
   isActive: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onHover: (offerId: string | null) => void;
 };
 
-function PlaceCard({
+function PlaceCardInner({
   id,
   img,
   cost,
@@ -20,14 +18,13 @@ function PlaceCard({
   isPremium,
   isBookmarked,
   isActive,
-  onMouseEnter,
-  onMouseLeave,
+  onHover,
 }: PlaceCardProps): JSX.Element {
   return (
     <article
       className={`cities__card place-card ${isActive ? 'place-card--active' : ''}`}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={() => onHover(id)}
+      onMouseLeave={() => onHover(null)}
     >
       <OfferCardBody
         isPremium={isPremium}
@@ -35,21 +32,14 @@ function PlaceCard({
         cost={cost}
         title={title}
         type={type}
-        imageLink={
-          <Link to={`${AppRoute.Offer}/${id}`}>
-            <img
-              className="place-card__image"
-              src={img}
-              width={260}
-              height={200}
-              alt="Place image"
-            />
-          </Link>
-        }
+        imgSrc={img}
+        offerId={id}
         bookmarkActive={isBookmarked}
       />
     </article>
   );
 }
+
+const PlaceCard = React.memo(PlaceCardInner);
 
 export default PlaceCard;

@@ -1,13 +1,15 @@
+import React from 'react';
+
 import type { PlaceCard } from '../../types/place-card';
 import PlaceCardComponent from '../place-card/place-card';
 
 type PlacesListProps = {
   offers: PlaceCard[];
   activeOfferId: string | null;
-  onOfferTypeChange: (offerId: string | null) => void;
+  onHover: (offerId: string | null) => void;
 };
 
-function PlacesList({ offers, activeOfferId, onOfferTypeChange }: PlacesListProps): JSX.Element {
+function PlacesListInner({ offers, activeOfferId, onHover }: PlacesListProps): JSX.Element {
   return (
     <div className="cities__places-list places__list tabs__content">
       {offers.map((offer) => (
@@ -15,12 +17,13 @@ function PlacesList({ offers, activeOfferId, onOfferTypeChange }: PlacesListProp
           key={offer.id}
           {...offer}
           isActive={offer.id === activeOfferId}
-          onMouseEnter={() => onOfferTypeChange(offer.id)}
-          onMouseLeave={() => onOfferTypeChange(null)}
+          onHover={onHover}
         />
       ))}
     </div>
   );
 }
+
+const PlacesList = React.memo(PlacesListInner);
 
 export default PlacesList;

@@ -12,4 +12,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/leaflet')) return 'leaflet';
+          if (id.includes('node_modules')) return 'vendor';
+        },
+      },
+    },
+  },
 });

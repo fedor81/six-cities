@@ -1,5 +1,6 @@
 import { PlaceCard, PlaceCardType, Rating } from '../types/place-card';
-import type { OfferPreviewResponse } from '../types/server';
+import type { OfferDetailResponse, OfferPreviewResponse, ReviewResponse, UserResponse } from '../types/server';
+import type { OfferDetail, Review, User } from '../types/offer';
 
 function adaptType(type: string): PlaceCardType {
   switch (type.toLowerCase()) {
@@ -16,7 +17,7 @@ function adaptType(type: string): PlaceCardType {
 
 function adaptRating(rating: number): Rating {
   const normalized = Math.min(Math.max(Math.round(rating), 0), 5);
-  return (normalized * 20) as Rating;
+  return [0, 20, 40, 60, 80, 100][normalized] as Rating;
 }
 
 export function adaptOfferToClient(offer: OfferPreviewResponse): PlaceCard {
@@ -31,5 +32,45 @@ export function adaptOfferToClient(offer: OfferPreviewResponse): PlaceCard {
     isBookmarked: offer.isFavorite,
     city: offer.city,
     location: offer.location,
+  };
+}
+
+function adaptUser(serverUser: UserResponse): User {
+  return {
+    name: serverUser.name,
+    avatarUrl: serverUser.avatarUrl,
+    isPro: serverUser.isPro,
+  };
+}
+
+function adaptReview(serverReview: ReviewResponse): Review {
+  return {
+    id: serverReview.id,
+    date: serverReview.date,
+    user: adaptUser(serverReview.user),
+    comment: serverReview.comment,
+    rating: serverReview.rating as Review['rating'],
+  };
+}
+
+export function adaptOfferDetailToClient(offer: OfferDetailResponse, reviews: ReviewResponse[]): OfferDetail {
+  return {
+    id: offer.id,
+    img: offer.images[0] ?? '',
+    cost: offer.price,
+    title: offer.title,
+    type: adaptType(offer.type),
+    rating: adaptRating(offer.rating),
+    isPremium: offer.isPremium,
+    isBookmarked: offer.isFavorite,
+    city: offer.city,
+    location: offer.location,
+    description: offer.description,
+    images: offer.images,
+    goods: offer.goods,
+    host: adaptUser(offer.host),
+    bedrooms: offer.bedrooms,
+    maxAdults: offer.maxAdults,
+    reviews: reviews.map(adaptReview),
   };
 }

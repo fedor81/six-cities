@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useMemo, useState } from 'react';
 
 import CitiesList from '../../components/cities-list/cities-list';
 import Header from '../../components/header/header';
@@ -9,36 +8,35 @@ import ServerError from '../../components/server-error/server-error';
 import SortingOptions from '../../components/sorting-options/sorting-options';
 import Spinner from '../../components/spinner/spinner';
 import { CITIES, DataLoadingStatus, SortingType } from '../../const';
-import { changeCity } from '../../store/action';
-import type { RootState } from '../../store';
+import { changeCity } from '../../store/data-slice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { getOffersByCityName } from '../../store/selectors';
 import type { City } from '../../types/place-card';
 import { sortOffers } from '../../utils/sorting';
 
 function Main(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingType>(SortingType.Popular);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const city = useSelector((state: RootState) => state.city);
-  const offers = useSelector((state: RootState) => state.offers);
-  const offersStatus = useSelector((state: RootState) => state.offersStatus);
-  const offersError = useSelector((state: RootState) => state.offersError);
+  const city = useAppSelector((state) => state.data.city);
+  const offers = useAppSelector((state) => state.data.offers);
+  const offersStatus = useAppSelector((state) => state.data.offersStatus);
+  const offersError = useAppSelector((state) => state.data.offersError);
 
   const isError = offersStatus === DataLoadingStatus.Error;
   const isLoading = offersStatus === DataLoadingStatus.Idle || offersStatus === DataLoadingStatus.Loading;
 
-  const cityOffers = sortOffers(
-    offers.filter((offer) => offer.city.name === city.name),
-    sorting
+  const cityOffers = useMemo(
+    () => sortOffers(getOffersByCityName(offers, city.name), sorting),
+    [offers, city.name, sorting]
   );
 
   const handleCityChange = (nextCity: City) => {
     dispatch(changeCity(nextCity));
   };
 
-  const handleOfferHover = (offerId: string | null) => {
-    setActiveOfferId(offerId);
-  };
+  const handleOfferHover = useCallback((offerId: string | null) => setActiveOfferId(offerId), []);
 
   const handleSortingChange = (nextSorting: SortingType) => {
     setSorting(nextSorting);
@@ -46,7 +44,7 @@ function Main(): JSX.Element {
 
   return (
     <div className="page page--gray page--main">
-      <Header isLogoActive favoriteCount={3} />
+      <Header isLogoActive />
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
@@ -74,7 +72,7 @@ function Main(): JSX.Element {
                   <PlacesList
                     offers={cityOffers}
                     activeOfferId={activeOfferId}
-                    onOfferTypeChange={handleOfferHover}
+                    onHover={handleOfferHover}
                   />
                 )}
               </section>
