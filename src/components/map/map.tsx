@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Icon, Marker, layerGroup, Map as LeafletMap, TileLayer } from 'leaflet';
+import {
+  Icon,
+  Marker,
+  layerGroup,
+  Map as LeafletMap,
+  TileLayer,
+} from 'leaflet';
 import { PlaceCard, City } from '../../types/place-card';
 import 'leaflet/dist/leaflet.css';
 import { URL_MARKER_DEFAULT, URL_MARKER_CURRENT } from './map-config';
@@ -33,7 +39,6 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
 
   const offerIds = useMemo(() => offers.map((o) => o.id).sort(), [offers]);
 
-  // Create the Leaflet map once for the component lifetime
   useEffect(() => {
     const container = mapContainerRef.current;
 
@@ -55,8 +60,8 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        }
-      )
+        },
+      ),
     );
 
     mapRef.current = instance;
@@ -71,15 +76,13 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     };
   }, []);
 
-  // Follow the selected city
   useEffect(() => {
     mapRef.current?.setView(
       [city.location.latitude, city.location.longitude],
-      city.location.zoom
+      city.location.zoom,
     );
   }, [city.location.latitude, city.location.longitude, city.location.zoom]);
 
-  // Add or remove markers only when the set of offer IDs changes
   useEffect(() => {
     const markerLayer = markerLayerRef.current;
 
@@ -100,7 +103,6 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
 
     const currentIdSet = new Set(currentIds);
 
-    // Remove markers no longer in offers
     prevIds.forEach((id) => {
       if (!currentIdSet.has(id)) {
         markerLayer.removeLayer(markersRef.current[id]);
@@ -108,7 +110,6 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
       }
     });
 
-    // Add new markers
     offers.forEach((offer) => {
       if (!markersRef.current[offer.id]) {
         const marker = new Marker(
@@ -116,7 +117,12 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
             lat: offer.location.latitude,
             lng: offer.location.longitude,
           },
-          { icon: offer.id === selectedOfferId ? currentCustomIcon : defaultCustomIcon }
+          {
+            icon:
+              offer.id === selectedOfferId
+                ? currentCustomIcon
+                : defaultCustomIcon,
+          },
         );
         marker.addTo(markerLayer);
         markersRef.current[offer.id] = marker;
@@ -126,7 +132,6 @@ function MapInner({ city, offers, selectedOfferId }: MapProps): JSX.Element {
     prevOfferIdsRef.current = currentIds;
   }, [offers, offerIds, selectedOfferId]);
 
-  // Update only the markers whose selection state actually changed
   useEffect(() => {
     const prevId = prevSelectedIdRef.current;
 

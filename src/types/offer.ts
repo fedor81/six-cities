@@ -17,7 +17,7 @@ export type Review = {
 export type OfferDetail = PlaceCard & {
   description: string;
   images: string[];
-  goods: string[]; // amenities
+  goods: string[];
   host: User;
   bedrooms: number;
   maxAdults: number;

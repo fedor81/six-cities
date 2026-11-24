@@ -25,7 +25,6 @@ export const getHeaderState = createSelector(
   (authorizationStatus, user, favoriteCount) => ({ authorizationStatus, user, favoriteCount })
 );
 
-// Offers-level selectors (operate on a PlaceCard[] array)
 export const getBookmarkedOffersFromList = (offers: PlaceCard[]): PlaceCard[] =>
   offers.filter((offer) => offer.isBookmarked);
 export const getOffersByCityName = (offers: PlaceCard[], cityName: string): PlaceCard[] =>
