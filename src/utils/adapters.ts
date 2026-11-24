@@ -43,7 +43,7 @@ function adaptUser(serverUser: UserResponse): User {
   };
 }
 
-function adaptReview(serverReview: ReviewResponse): Review {
+export function adaptReviewToClient(serverReview: ReviewResponse): Review {
   return {
     id: serverReview.id,
     date: serverReview.date,
@@ -71,6 +71,6 @@ export function adaptOfferDetailToClient(offer: OfferDetailResponse, reviews: Re
     host: adaptUser(offer.host),
     bedrooms: offer.bedrooms,
     maxAdults: offer.maxAdults,
-    reviews: reviews.map(adaptReview),
+    reviews: reviews.map(adaptReviewToClient),
   };
 }

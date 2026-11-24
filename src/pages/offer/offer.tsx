@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
 
 import { fetchOfferDetailsAction } from '../../store/api-actions';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -11,27 +11,32 @@ import ReviewList from '../../components/reviews-list/review-list';
 import RatingBar from '../../components/offer-card/rating-bar';
 import OfferBookmarkButton from '../../components/offer-card/offer-bookmark-button';
 import Spinner from '../../components/spinner/spinner';
-import { AuthorizationStatus } from '../../const';
-import { getNearbyOffers } from '../../store/selectors';
+import { AppRoute, AuthorizationStatus } from '../../const';
 import { getNumericRating } from '../../utils/rating';
 
 function Offer(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
-  const offers = useAppSelector((state) => state.data.offers);
   const offerDetails = useAppSelector((state) => state.data.offerDetails);
+  const nearbyOffers = useAppSelector((state) => state.data.nearbyOffers);
+  const offerDetailsNotFound = useAppSelector((state) => state.data.offerDetailsNotFound);
   const offerDetailsError = useAppSelector((state) => state.data.offerDetailsError);
   const authorizationStatus = useAppSelector((state) => state.user.authorizationStatus);
 
+  const isNotFound = id ? Boolean(offerDetailsNotFound[id]) : false;
+
   useEffect(() => {
-    if (id && !offerDetails[id]) {
+    if (id && !offerDetails[id] && !offerDetailsNotFound[id]) {
       dispatch(fetchOfferDetailsAction(id));
     }
-  }, [id, dispatch, offerDetails]);
+  }, [id, dispatch, offerDetails, offerDetailsNotFound]);
 
   const offer = id ? offerDetails[id] : undefined;
+  const nearPlaces = id ? nearbyOffers[id] ?? [] : [];
 
-  const nearPlaces = useMemo(() => (offer ? getNearbyOffers(offers, offer) : []), [offers, offer]);
+  if (isNotFound) {
+    return <Navigate to={AppRoute.NotFound} replace />;
+  }
 
   if (!offer) {
     return (
@@ -134,7 +139,7 @@ function Offer(): JSX.Element {
                 </div>
               </div>
               <ReviewList reviews={offer.reviews} />
-              {authorizationStatus === AuthorizationStatus.Auth && <ReviewForm />}
+              {authorizationStatus === AuthorizationStatus.Auth && <ReviewForm offerId={offer.id} />}
             </div>
           </div>
           <section className="offer__map map">

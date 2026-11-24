@@ -1,5 +1,9 @@
 import { useState, useCallback, Fragment } from 'react';
 
+import { DataLoadingStatus } from '../../const';
+import { submitReviewAction } from '../../store/api-actions';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+
 const MIN_REVIEW_LENGTH = 50;
 const MAX_REVIEW_LENGTH = 300;
 
@@ -11,10 +15,20 @@ const ratingTitles: Record<number, string> = {
   1: 'terribly',
 };
 
-function ReviewForm(): JSX.Element {
+type ReviewFormProps = {
+  offerId: string;
+};
+
+function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
+  const dispatch = useAppDispatch();
+  const reviewSubmitStatus = useAppSelector((state) => state.data.reviewSubmitStatus);
+  const reviewSubmitError = useAppSelector((state) => state.data.reviewSubmitError);
   const [review, setReview] = useState({ text: '', rating: 0 });
 
+  const isSubmitting = reviewSubmitStatus === DataLoadingStatus.Loading;
+
   const isSubmitDisabled =
+    isSubmitting ||
     review.rating === 0 ||
     review.text.length < MIN_REVIEW_LENGTH ||
     review.text.length > MAX_REVIEW_LENGTH;
@@ -33,9 +47,21 @@ function ReviewForm(): JSX.Element {
     [],
   );
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-  }, []);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (isSubmitDisabled) {
+        return;
+      }
+
+      dispatch(submitReviewAction({ offerId, data: { comment: review.text, rating: review.rating } }))
+        .unwrap()
+        .then(() => setReview({ text: '', rating: 0 }))
+        .catch(() => undefined);
+    },
+    [dispatch, offerId, review, isSubmitDisabled],
+  );
 
   return (
     <form className="reviews__form form" onSubmit={handleSubmit} method="post">
@@ -82,6 +108,11 @@ function ReviewForm(): JSX.Element {
           <b className="reviews__text-amount">{MIN_REVIEW_LENGTH} characters</b>
           .
         </p>
+        {reviewSubmitError && (
+          <p className="reviews__help">
+            <b className="reviews__text-amount">{reviewSubmitError}</b>
+          </p>
+        )}
         <button
           className="reviews__submit form__submit button"
           type="submit"

@@ -3,13 +3,33 @@ import type { AxiosError } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
 import type { PlaceCard } from '../types/place-card';
-import type { OfferDetail } from '../types/offer';
+import type { OfferDetail, Review } from '../types/offer';
 import type { AuthInfoResponse, LoginData, OfferDetailResponse, OfferPreviewResponse, ReviewResponse } from '../types/server';
-import { adaptOfferToClient, adaptOfferDetailToClient } from '../utils/adapters';
+import { adaptOfferToClient, adaptOfferDetailToClient, adaptReviewToClient } from '../utils/adapters';
 
-type ThunkConfig = {
+type ThunkConfig<TReject = string> = {
   extra: import('axios').AxiosInstance;
-  rejectValue: string;
+  rejectValue: TReject;
+};
+
+export type OfferDetailsPayload = {
+  offer: OfferDetail;
+  nearbyOffers: PlaceCard[];
+};
+
+export type OfferDetailsError = {
+  status: number | null;
+  message: string;
+};
+
+export type ReviewData = {
+  comment: string;
+  rating: number;
+};
+
+export type ReviewSubmitArg = {
+  offerId: string;
+  data: ReviewData;
 };
 
 export const checkAuth = createAsyncThunk<AuthInfoResponse, undefined, ThunkConfig>(
@@ -67,18 +87,46 @@ export const fetchOffersAction = createAsyncThunk<PlaceCard[], undefined, ThunkC
   }
 );
 
-export const fetchOfferDetailsAction = createAsyncThunk<OfferDetail, string, ThunkConfig>(
+export const fetchOfferDetailsAction = createAsyncThunk<
+  OfferDetailsPayload,
+  string,
+  ThunkConfig<OfferDetailsError>
+>(
   'data/fetchOfferDetails',
   async (offerId, { extra: api, rejectWithValue }) => {
     try {
-      const [{ data: offer }, { data: reviews }] = await Promise.all([
+      const [{ data: offer }, { data: reviews }, { data: nearby }] = await Promise.all([
         api.get<OfferDetailResponse>(`/offers/${offerId}`),
         api.get<ReviewResponse[]>(`/comments/${offerId}`),
+        api.get<OfferPreviewResponse[]>(`/offers/${offerId}/nearby`),
       ]);
 
-      return adaptOfferDetailToClient(offer, reviews);
+      return {
+        offer: adaptOfferDetailToClient(offer, reviews),
+        nearbyOffers: nearby.slice(0, 3).map(adaptOfferToClient),
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      const status = axiosError.response?.status ?? null;
+
+      return rejectWithValue({
+        status,
+        message: status === StatusCodes.NOT_FOUND
+          ? 'Предложение не найдено.'
+          : 'Не удалось загрузить детали предложения.',
+      });
+    }
+  }
+);
+
+export const submitReviewAction = createAsyncThunk<Review, ReviewSubmitArg, ThunkConfig>(
+  'data/submitReview',
+  async ({ offerId, data: reviewData }, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.post<ReviewResponse>(`/comments/${offerId}`, reviewData);
+      return adaptReviewToClient(data);
     } catch {
-      return rejectWithValue('Не удалось загрузить детали предложения.');
+      return rejectWithValue('Не удалось отправить комментарий. Попробуйте ещё раз.');
     }
   }
 );

@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { StatusCodes } from 'http-status-codes';
 
 import { CITIES, DataLoadingStatus } from '../const';
 import type { OfferDetail } from '../types/offer';
 import type { City, PlaceCard } from '../types/place-card';
-import { fetchOfferDetailsAction, fetchOffersAction } from './api-actions';
+import { fetchOfferDetailsAction, fetchOffersAction, submitReviewAction } from './api-actions';
 
 export type DataState = {
   city: City;
@@ -12,8 +13,12 @@ export type DataState = {
   offersStatus: DataLoadingStatus;
   offersError: string | null;
   offerDetails: Record<string, OfferDetail>;
+  nearbyOffers: Record<string, PlaceCard[]>;
+  offerDetailsNotFound: Record<string, boolean>;
   offerDetailsStatus: DataLoadingStatus;
   offerDetailsError: string | null;
+  reviewSubmitStatus: DataLoadingStatus;
+  reviewSubmitError: string | null;
 };
 
 const initialState: DataState = {
@@ -22,8 +27,12 @@ const initialState: DataState = {
   offersStatus: DataLoadingStatus.Idle,
   offersError: null,
   offerDetails: {},
+  nearbyOffers: {},
+  offerDetailsNotFound: {},
   offerDetailsStatus: DataLoadingStatus.Idle,
   offerDetailsError: null,
+  reviewSubmitStatus: DataLoadingStatus.Idle,
+  reviewSubmitError: null,
 };
 
 const dataSlice = createSlice({
@@ -56,12 +65,34 @@ const dataSlice = createSlice({
         state.offerDetailsError = null;
       })
       .addCase(fetchOfferDetailsAction.fulfilled, (state, action) => {
-        state.offerDetails[action.payload.id] = action.payload;
+        state.offerDetails[action.payload.offer.id] = action.payload.offer;
+        state.nearbyOffers[action.payload.offer.id] = action.payload.nearbyOffers;
         state.offerDetailsStatus = DataLoadingStatus.Success;
       })
       .addCase(fetchOfferDetailsAction.rejected, (state, action) => {
         state.offerDetailsStatus = DataLoadingStatus.Error;
-        state.offerDetailsError = action.payload ?? 'Не удалось загрузить детали предложения.';
+        state.offerDetailsError = action.payload?.message ?? 'Не удалось загрузить детали предложения.';
+
+        if (action.payload?.status === StatusCodes.NOT_FOUND && action.meta.arg) {
+          state.offerDetailsNotFound[action.meta.arg] = true;
+        }
+      })
+      .addCase(submitReviewAction.pending, (state) => {
+        state.reviewSubmitStatus = DataLoadingStatus.Loading;
+        state.reviewSubmitError = null;
+      })
+      .addCase(submitReviewAction.fulfilled, (state, action) => {
+        const offer = state.offerDetails[action.meta.arg.offerId];
+
+        if (offer) {
+          offer.reviews.unshift(action.payload);
+        }
+
+        state.reviewSubmitStatus = DataLoadingStatus.Success;
+      })
+      .addCase(submitReviewAction.rejected, (state, action) => {
+        state.reviewSubmitStatus = DataLoadingStatus.Error;
+        state.reviewSubmitError = action.payload ?? 'Не удалось отправить комментарий.';
       });
   },
 });
